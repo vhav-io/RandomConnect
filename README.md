@@ -1,1 +1,1 @@
-# OpenChat
+# QuickGroup
