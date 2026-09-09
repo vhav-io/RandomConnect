@@ -1,11 +1,22 @@
+:root {
+    --background: #F6F7FB;
+    --dark: #14213D;
+
+    --primary: #3478F6;
+    --secondary: #DCE8FF;
+
+    --accent: #F4B942;
+}
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
+body {
     font-family: Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--dark);
 }
 
 nav {
@@ -22,12 +33,17 @@ nav ul {
 }
 nav ul li a {
     text-decoration: none;
-    color: greenyellow;
+    color: var(--dark);
+    font-size: 15px;
+}
+header {
+    border-bottom: 1px solid var(--secondary);
 }
 
 .logo {
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 700;
+    color: var(--dark);
 }
 .hero {
     min-height: 80vh;
@@ -35,10 +51,47 @@ nav ul li a {
     justify-content: center;
     align-items: center;
     text-align: center;
+    padding: 60px 8%;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: "";
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    background-color: var(--secondary);
+
+    border-radius: 50%;
+
+    top: -100px;
+    right: -80px;
+}
+.hero::after {
+    content: "";
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    background-color: var(--accent);
+
+    border-radius: 50%;
+
+    bottom: -100px;
+    left: -50px;
+}
+.hero-content {
+    max-width: 700px;
+    position: relative;
+    z-index: 1;
 }
 .hero-content h1 {
-    font-size: 48px;
+    font-size: 52px;
     margin-bottom: 20px;
+    line-height: 1.1;
 }
 .hero-content p {
     font-size: 18px;
@@ -51,14 +104,26 @@ nav ul li a {
 }
 .btn {
     text-decoration: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    color: black;
-    border: 1px solid black;
+    padding: 13px 22px;
+    border-radius: 8px;
+
+    color: var(--dark);
+    border: 1px solid var(--dark);
+
+    font-weight: 600;
+}
+.btn:hover {
+    background-color: var(--dark);
+    color: white;
 }
 .primary {
-    background-color: goldenrod;
+    background-color: var(--primary);
     color: white;
+    border-color: var(--primary);
+}
+.primary:hover {
+    background-color: var(--dark);
+    border-color: var(--dark);
 }
 .connection {
     padding: 80px 8%;
@@ -78,26 +143,46 @@ nav ul li a {
 }
 .option {
     flex: 1;
-    padding: 30px;
-    border: 1px solid black;
-    border-radius: 10px;
+    padding: 35px 30px;
+
+    background-color: white;
+
+    border: 1px solid var(--secondary);
+    border-radius: 16px;
+}
+.option:hover {
+    border-color: var(--primary);
 }
 .option h3 {
     font-size: 24px;
     margin-bottom: 15px;
+    color: var(--dark);
 }
 .option p {
     margin-bottom: 25px;
 }
 .option a {
     text-decoration: none;
-    border: 1px solid black;
-    padding: 10px 15px;
-    border-radius: 5px;
+
+    display: inline-block;
+
+    padding: 10px 16px;
+
+    color: var(--primary);
+
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+
+    font-weight: 600;
+}
+.option a:hover {
+    background-color: var(--primary);
+    color: white;
 }
 .how-it-works {
     padding: 80px 8%;
     text-align: center;
+    background-color: var(--secondary);
 }
 
 .how-content h2 {
@@ -109,20 +194,28 @@ nav ul li a {
     justify-content: center;
     gap: 30px;
 }
+.step {
+    flex: 1;
+    padding: 30px;
 
+    background-color: white;
+
+    border: 1px solid var(--secondary);
+    border-radius: 16px;
+}
+.step:hover {
+    border-color: var(--primary);
+}
 .step h3 {
     font-size: 22px;
     margin-bottom: 15px;
+    color: var(--dark);
 }
 .step p {
     line-height: 1.6;
+    color: var(--dark);
 }
-.step {
-    flex: 1;
-    padding: 25px;
-    border: 1px solid black;
-    border-radius: 10px;
-}
+
 .features {
     padding: 80px 8%;
     text-align: center;
@@ -143,20 +236,31 @@ nav ul li a {
 }
 .feature {
     width: 250px;
-    padding: 25px;
-    border: 1px solid black;
-    border-radius: 10px;
+    padding: 30px;
+
+    background-color: white;
+
+    border: 1px solid var(--secondary);
+    border-radius: 16px;
 }
 .feature h3 {
     margin-bottom: 15px;
+    color: var(--dark);
 }
 .feature p {
     line-height: 1.6;
+    color: var(--dark);
+}
+.feature:hover {
+    border-color: var(--primary);
 }
 
 footer {
-    padding: 40px 8%;
-    border-top: 1px solid black;
+    padding: 50px 8%;
+    margin-top: 40px;
+
+    background-color: white;
+    border-top: 1px solid var(--secondary);
 }
 .footer-content {
     display: flex;
@@ -170,10 +274,24 @@ footer {
 
 .footer-links a {
     text-decoration: none;
+    color: var(--dark);
+    font-size: 15px;
+}
+.footer-links a:hover {
+    color: var(--primary);
 }
 .copyright {
     text-align: center;
     margin-top: 30px;
+    font-size: 14px;
+}
+.btn,
+.option,
+.step,
+.feature,
+.option a,
+.footer-links a {
+    transition: 0.3s ease;
 }
 
 @media (max-width: 768px) {
@@ -190,6 +308,21 @@ footer {
         min-height: 70vh;
         padding: 40px 8%;
     }
+    .hero::before {
+        width: 180px;
+        height: 180px;
+
+        top: -70px;
+        right: -70px;
+    }
+
+    .hero::after {
+        width: 120px;
+        height: 120px;
+
+        bottom: -70px;
+        left: -50px;
+    }
     .hero-content h1 {
         font-size: 36px;
     }
@@ -199,6 +332,10 @@ footer {
     .hero-buttons {
         flex-direction: column;
         align-items: center;
+    }
+    .hero-buttons .btn {
+        width: 100%;
+        max-width: 280px;
     }
     /* Connection Section */
 
@@ -271,3 +408,5 @@ footer {
         flex-wrap: wrap;
     }
 }
+
+
