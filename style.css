@@ -91,9 +91,6 @@ nav ul li a {
 }
 .option a {
     text-decoration: none;
-}
-.option a {
-    text-decoration: none;
     border: 1px solid black;
     padding: 10px 15px;
     border-radius: 5px;
@@ -112,9 +109,7 @@ nav ul li a {
     justify-content: center;
     gap: 30px;
 }
-.step {
-    flex: 1;
-}
+
 .step h3 {
     font-size: 22px;
     margin-bottom: 15px;
@@ -179,4 +174,100 @@ footer {
 .copyright {
     text-align: center;
     margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+
+    nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav ul {
+        gap: 15px;
+    }
+    .hero {
+        min-height: 70vh;
+        padding: 40px 8%;
+    }
+    .hero-content h1 {
+        font-size: 36px;
+    }
+    .hero-content p {
+        font-size: 16px;
+    }
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    /* Connection Section */
+
+    .connection {
+        padding: 60px 8%;
+    }
+
+    .connection-content h2 {
+        font-size: 30px;
+    }
+
+    .connection-options {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .option {
+        padding: 25px;
+    }
+
+    /* How It Works Section */
+
+    .how-it-works {
+        padding: 60px 8%;
+    }
+
+    .how-content h2 {
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
+
+    .steps {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .step {
+        padding: 20px;
+    }
+
+    /* Features Section */
+
+    .features {
+        padding: 60px 8%;
+    }
+
+    .features-content h2 {
+        font-size: 30px;
+    }
+
+    .feature-list {
+        gap: 15px;
+    }
+
+    .feature {
+        width: 100%;
+        padding: 20px;
+    }
+
+    /* Footer */
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .footer-links {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
