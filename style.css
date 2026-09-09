@@ -12,18 +12,36 @@
     padding: 0;
     box-sizing: border-box;
 }
+html,
+body {
+    width: 100%;
+    overflow-x: hidden;
+}
 
 body {
     font-family: Arial, sans-serif;
-    background-color: var(--background);
     color: var(--dark);
-}
 
+    background-color: var(--background);
+
+    background-image:
+        radial-gradient(
+            circle,
+            var(--secondary) 2px,
+            transparent 2px
+        );
+
+    background-size: 32px 32px;
+}
 nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 8%;
+
+    padding: 18px 8%;
+
+    max-width: 1400px;
+    margin: auto;
 }
 
 nav ul {
@@ -34,9 +52,33 @@ nav ul {
 nav ul li a {
     text-decoration: none;
     color: var(--dark);
+
     font-size: 15px;
+    font-weight: 500;
+
+    position: relative;
+}
+nav ul li a::after {
+    content: "";
+
+    position: absolute;
+
+    width: 0;
+    height: 2px;
+
+    background-color: var(--primary);
+
+    left: 0;
+    bottom: -6px;
+
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
 }
 header {
+    background-color: var(--background);
     border-bottom: 1px solid var(--secondary);
 }
 
@@ -44,45 +86,23 @@ header {
     font-size: 24px;
     font-weight: 700;
     color: var(--dark);
+
+    letter-spacing: -0.5px;
 }
 .hero {
     min-height: 80vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     text-align: center;
+
     padding: 60px 8%;
+
     position: relative;
-    overflow: hidden;
 }
-.hero::before {
-    content: "";
-    position: absolute;
 
-    width: 280px;
-    height: 280px;
-
-    background-color: var(--secondary);
-
-    border-radius: 50%;
-
-    top: -100px;
-    right: -80px;
-}
-.hero::after {
-    content: "";
-    position: absolute;
-
-    width: 180px;
-    height: 180px;
-
-    background-color: var(--accent);
-
-    border-radius: 50%;
-
-    bottom: -100px;
-    left: -50px;
-}
 .hero-content {
     max-width: 700px;
     position: relative;
@@ -143,23 +163,27 @@ header {
 }
 .option {
     flex: 1;
-    padding: 35px 30px;
+    padding: 38px 32px;
 
     background-color: white;
 
     border: 1px solid var(--secondary);
     border-radius: 16px;
-}
+
+    text-align: left;
+}   
 .option:hover {
     border-color: var(--primary);
+    transform: translateY(-4px);
 }
 .option h3 {
-    font-size: 24px;
+    font-size: 26px;
     margin-bottom: 15px;
     color: var(--dark);
 }
 .option p {
     margin-bottom: 25px;
+    line-height: 1.7;
 }
 .option a {
     text-decoration: none;
@@ -196,23 +220,39 @@ header {
 }
 .step {
     flex: 1;
-    padding: 30px;
+    padding: 32px 28px;
 
     background-color: white;
 
     border: 1px solid var(--secondary);
     border-radius: 16px;
+
+    text-align: left;
 }
 .step:hover {
     border-color: var(--primary);
+    transform: translateY(-4px);
 }
 .step h3 {
     font-size: 22px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     color: var(--dark);
 }
+
+.step-number {
+    display: block;
+
+    color: var(--accent);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+
 .step p {
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--dark);
 }
 
@@ -253,19 +293,23 @@ header {
 }
 .feature:hover {
     border-color: var(--primary);
+    transform: translateY(-4px);
 }
 
 footer {
-    padding: 50px 8%;
-    margin-top: 40px;
+    padding: 45px 8% 30px;
 
     background-color: white;
+
     border-top: 1px solid var(--secondary);
 }
 .footer-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    max-width: 1400px;
+    margin: auto;
 }
 .footer-links {
     display: flex;
@@ -274,16 +318,26 @@ footer {
 
 .footer-links a {
     text-decoration: none;
+
     color: var(--dark);
-    font-size: 15px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: color 0.3s ease;
 }
 .footer-links a:hover {
     color: var(--primary);
 }
 .copyright {
     text-align: center;
-    margin-top: 30px;
-    font-size: 14px;
+
+    margin-top: 35px;
+    padding-top: 20px;
+
+    border-top: 1px solid var(--secondary);
+
+    font-size: 13px;
 }
 .btn,
 .option,
@@ -291,40 +345,42 @@ footer {
 .feature,
 .option a,
 .footer-links a {
-    transition: 0.3s ease;
+    transition: 
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 @media (max-width: 768px) {
+    section {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
 
     nav {
         flex-direction: column;
-        gap: 15px;
+        gap: 14px;
+        padding: 18px 24px;
     }
 
     nav ul {
-        gap: 15px;
+        gap: 18px;
+        justify-content: center;
+        flex-wrap: wrap;
     }
     .hero {
-        min-height: 70vh;
-        padding: 40px 8%;
-    }
-    .hero::before {
-        width: 180px;
-        height: 180px;
-
-        top: -70px;
-        right: -70px;
+        min-height: 620px;
+        padding: 60px 24px;
     }
 
-    .hero::after {
-        width: 120px;
-        height: 120px;
-
-        bottom: -70px;
-        left: -50px;
+    .hero-content {
+        width: 100%;
     }
     .hero-content h1 {
-        font-size: 36px;
+        font-size: 38px;
+        line-height: 1.15;
     }
     .hero-content p {
         font-size: 16px;
@@ -353,7 +409,7 @@ footer {
     }
 
     .option {
-        padding: 25px;
+        padding: 28px 22px;
     }
 
     /* How It Works Section */
@@ -372,8 +428,9 @@ footer {
         gap: 20px;
     }
 
+
     .step {
-        padding: 20px;
+        padding: 28px 22px;
     }
 
     /* Features Section */
@@ -391,8 +448,7 @@ footer {
     }
 
     .feature {
-        width: 100%;
-        padding: 20px;
+        padding: 28px 22px;
     }
 
     /* Footer */
@@ -407,6 +463,51 @@ footer {
         justify-content: center;
         flex-wrap: wrap;
     }
-}
 
+    .option,
+    .step,
+    .feature {
+        width: 100%;
+        max-width: 100%;
+    }
+    .connection-options,
+    .steps,
+    .feature-list {
+        width: 100%;
+    }
+}
+@media (max-width: 480px) {
+
+    nav ul {
+        gap: 14px;
+    }
+
+    nav ul li a {
+        font-size: 14px;
+    }
+
+    .logo {
+        font-size: 22px;
+    }
+
+    .hero-content h1 {
+        font-size: 34px;
+    }
+
+    .hero-content p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .hero-buttons .btn {
+        max-width: 100%;
+    }
+
+    .connection-content h2,
+    .how-content h2,
+    .features-content h2 {
+        font-size: 28px;
+    }
+
+}
 
