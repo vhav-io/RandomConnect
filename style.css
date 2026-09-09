@@ -98,3 +98,33 @@ nav ul li a {
     padding: 10px 15px;
     border-radius: 5px;
 }
+.how-it-works {
+    padding: 80px 8%;
+    text-align: center;
+}
+
+.how-content h2 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+.steps {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+.step {
+    flex: 1;
+}
+.step h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+.step p {
+    line-height: 1.6;
+}
+.step {
+    flex: 1;
+    padding: 25px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
