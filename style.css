@@ -60,3 +60,41 @@ nav ul li a {
     background-color: goldenrod;
     color: white;
 }
+.connection {
+    padding: 80px 8%;
+    text-align: center;
+}
+.connection-content h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+.connection-content > p {
+    margin-bottom: 40px;
+}
+.connection-options {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+.option {
+    flex: 1;
+    padding: 30px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+.option h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+.option p {
+    margin-bottom: 25px;
+}
+.option a {
+    text-decoration: none;
+}
+.option a {
+    text-decoration: none;
+    border: 1px solid black;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
