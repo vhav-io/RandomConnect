@@ -29,3 +29,34 @@ nav ul li a {
     font-size: 24px;
     font-weight: bold;
 }
+.hero {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.btn {
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    color: black;
+    border: 1px solid black;
+}
+.primary {
+    background-color: goldenrod;
+    color: white;
+}
