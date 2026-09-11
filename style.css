@@ -353,6 +353,446 @@ footer {
         box-shadow 0.3s ease;
 }
 
+
+/* Random Chat Page */
+
+.chat-page {
+    min-height: calc(100vh - 80px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 60px 8%;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 900px;
+
+    background-color: white;
+
+    border: 1px solid var(--secondary);
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 25px 30px;
+
+    border-bottom: 1px solid var(--secondary);
+}
+
+.chat-header h1 {
+    font-size: 28px;
+    margin-bottom: 6px;
+}
+
+.chat-header p {
+    font-size: 15px;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 8px 14px;
+
+    background-color: var(--secondary);
+
+    border-radius: 20px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: var(--dark);
+}
+
+.chat-area {
+    min-height: 400px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 40px;
+}
+
+.matching-screen {
+    text-align: center;
+    max-width: 450px;
+}
+
+.matching-screen h2 {
+    font-size: 26px;
+    margin-bottom: 12px;
+}
+
+.matching-screen p {
+    line-height: 1.6;
+}
+
+.matching-circle {
+    width: 70px;
+    height: 70px;
+
+    margin: 0 auto 25px;
+
+    border: 5px solid var(--secondary);
+    border-top-color: var(--primary);
+
+    border-radius: 50%;
+
+    animation: spin 1s linear infinite;
+}
+
+.matching-circle span {
+    display: block;
+}
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+.chat-actions {
+    padding: 20px 30px;
+
+    border-top: 1px solid var(--secondary);
+
+    display: flex;
+    justify-content: center;
+}
+
+.chat-btn {
+    padding: 12px 24px;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.secondary-btn {
+    background-color: white;
+
+    color: var(--dark);
+
+    border: 1px solid var(--dark);
+}
+
+.secondary-btn:hover {
+    background-color: var(--dark);
+    color: white;
+}
+
+/* Conversation */
+
+.conversation {
+    display: none;
+
+    width: 100%;
+    height: 400px;
+
+    flex-direction: column;
+}
+
+.messages {
+    flex: 1;
+
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 10px;
+}
+
+.message {
+    max-width: 70%;
+
+    padding: 12px 16px;
+
+    border-radius: 12px;
+
+    line-height: 1.5;
+}
+
+.message.received {
+    align-self: flex-start;
+
+    background-color: var(--secondary);
+}
+
+.message.sent {
+    align-self: flex-end;
+
+    background-color: var(--primary);
+
+    color: white;
+}
+
+.message-form {
+    display: flex;
+
+    gap: 10px;
+
+    padding-top: 15px;
+}
+
+.message-form input {
+    flex: 1;
+
+    padding: 12px 15px;
+
+    border: 1px solid var(--secondary);
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    outline: none;
+}
+
+.message-form input:focus {
+    border-color: var(--primary);
+}
+
+.message-form button {
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: var(--primary);
+    color: white;
+
+    font-family: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+/* Group Page */
+
+.group-page {
+    min-height: calc(100vh - 80px);
+
+    padding: 80px 8%;
+}
+
+.group-intro {
+    max-width: 650px;
+
+    margin: 0 auto 50px;
+
+    text-align: center;
+}
+
+.group-intro h1 {
+    font-size: 42px;
+
+    margin-bottom: 15px;
+
+    line-height: 1.15;
+}
+
+.group-intro p {
+    font-size: 17px;
+
+    line-height: 1.6;
+}
+
+.group-options {
+    max-width: 1000px;
+
+    margin: auto;
+
+    display: flex;
+
+    gap: 30px;
+}
+
+.group-card {
+    flex: 1;
+
+    background-color: white;
+
+    border: 1px solid var(--secondary);
+
+    border-radius: 16px;
+
+    padding: 38px 32px;
+
+    transition:
+        border-color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.group-card:hover {
+    border-color: var(--primary);
+
+    transform: translateY(-4px);
+}
+
+.group-card h2 {
+    font-size: 26px;
+
+    margin-bottom: 15px;
+}
+
+.group-card-content > p {
+    line-height: 1.7;
+
+    margin-bottom: 30px;
+}
+
+.group-card form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.group-card label {
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.group-card input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid var(--secondary);
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    color: var(--dark);
+
+    outline: none;
+
+    transition: border-color 0.3s ease;
+}
+
+.group-card input:focus {
+    border-color: var(--primary);
+}
+
+.group-btn {
+    margin-top: 10px;
+
+    padding: 13px 18px;
+
+    border-radius: 8px;
+
+    border: 1px solid var(--primary);
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.primary-group-btn {
+    background-color: var(--primary);
+
+    color: white;
+}
+
+.primary-group-btn:hover {
+    background-color: var(--dark);
+
+    border-color: var(--dark);
+}
+
+.secondary-group-btn {
+    background-color: white;
+
+    color: var(--primary);
+}
+
+.secondary-group-btn:hover {
+    background-color: var(--primary);
+
+    color: white;
+}
+
+.group-result {
+    max-width: 600px;
+
+    margin: 40px auto 0;
+
+    text-align: center;
+
+    display: none;
+
+    padding: 25px;
+
+    background-color: white;
+
+    border: 1px solid var(--secondary);
+
+    border-radius: 16px;
+}
+
+.group-result h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.group-result p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.group-result h2 {
+    margin-top: 20px;
+
+    color: var(--primary);
+
+    font-size: 32px;
+
+    letter-spacing: 4px;
+}
+
 @media (max-width: 768px) {
     section {
         padding-left: 24px;
@@ -475,6 +915,73 @@ footer {
     .feature-list {
         width: 100%;
     }
+
+    /* Random Chat Page */
+
+    .chat-page {
+        min-height: auto;
+
+        padding: 40px 24px;
+    }
+
+    .chat-container {
+        border-radius: 16px;
+    }
+
+    .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 15px;
+
+        padding: 22px;
+    }
+
+    .chat-area {
+        min-height: 350px;
+
+        padding: 30px 20px;
+    }
+
+    .matching-screen h2 {
+        font-size: 23px;
+    }
+
+    .chat-actions {
+        padding: 18px 22px;
+    }
+
+    .chat-btn {
+        width: 100%;
+    }
+
+    /* Group Page */
+
+    .group-page {
+        padding: 60px 24px;
+    }
+
+    .group-intro {
+        margin-bottom: 35px;
+    }
+
+    .group-intro h1 {
+        font-size: 34px;
+    }
+
+    .group-intro p {
+        font-size: 16px;
+    }
+
+    .group-options {
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+    .group-card {
+        padding: 28px 22px;
+    }
 }
 @media (max-width: 480px) {
 
@@ -507,6 +1014,14 @@ footer {
     .how-content h2,
     .features-content h2 {
         font-size: 28px;
+    }
+
+    .group-intro h1 {
+    font-size: 30px;
+    }
+
+    .group-card h2 {
+        font-size: 24px;
     }
 
 }

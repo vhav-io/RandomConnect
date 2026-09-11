@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Random Chat - RandomConnect</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html">RandomConnect</a>
+            </div>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="group.html">Groups</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main>
+
+        <section class="chat-page">
+
+            <div class="chat-container">
+
+                <div class="chat-header">
+
+                    <div>
+                        <h1>Random Chat</h1>
+
+                        <p id="chat-description">
+                            Connect with someone new anonymously.
+                        </p>
+                    </div>
+
+                    <span class="status" id="chat-status">
+                        Finding someone...
+                    </span>
+
+                </div>
+
+
+                <div class="chat-area">
+
+                    <!-- Matching Screen -->
+
+                    <div class="matching-screen" id="matching-screen">
+
+                        <div class="matching-circle"></div>
+
+                        <h2>Looking for someone to chat with</h2>
+
+                        <p>
+                            Please wait while we find another person.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Chat Screen -->
+
+                    <div class="conversation" id="conversation">
+
+                        <div class="messages" id="messages">
+
+                            <div class="message received">
+                                <p>Hey! You are now connected.</p>
+                            </div>
+
+                        </div>
+
+
+                        <form class="message-form" id="message-form">
+
+                            <input
+                                type="text"
+                                id="message-input"
+                                placeholder="Type a message..."
+                                autocomplete="off"
+                            >
+
+                            <button type="submit">
+                                Send
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chat-actions">
+
+                    <button
+                        class="chat-btn secondary-btn"
+                        id="chat-action-btn"
+                    >
+                        Cancel
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

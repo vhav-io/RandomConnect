@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Groups - RandomConnect</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+
+            <div class="logo">
+                <a href="index.html">RandomConnect</a>
+            </div>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="random-chat.html">Random Chat</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <main>
+
+        <section class="group-page">
+
+            <div class="group-intro">
+
+                <h1>Create or Join a Group</h1>
+
+                <p>
+                    Create a temporary space for your friends or join an existing conversation.
+                </p>
+
+            </div>
+
+
+            <div class="group-options">
+
+
+                <!-- Create Group -->
+
+                <div class="group-card">
+
+                    <div class="group-card-content">
+
+                        <h2>Create a Group</h2>
+
+                        <p>
+                            Start a temporary anonymous group and invite others to join.
+                        </p>
+
+                        <form id="create-group-form">
+
+                            <label for="group-name">
+                                Group Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="group-name"
+                                placeholder="Enter a group name"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <button
+                                type="submit"
+                                class="group-btn primary-group-btn"
+                            >
+                                Create Group
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Join Group -->
+
+                <div class="group-card">
+
+                    <div class="group-card-content">
+
+                        <h2>Join a Group</h2>
+
+                        <p>
+                            Enter a group code shared with you to join the conversation.
+                        </p>
+
+                        <form id="join-group-form">
+
+                            <label for="group-code">
+                                Group Code
+                            </label>
+
+                            <input
+                                type="text"
+                                id="group-code"
+                                placeholder="Enter group code"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <button
+                                type="submit"
+                                class="group-btn secondary-group-btn"
+                            >
+                                Join Group
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- Group Result -->
+
+            <div
+                class="group-result"
+                id="group-result"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
