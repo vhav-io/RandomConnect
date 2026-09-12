@@ -137,7 +137,7 @@ if (createGroupForm) {
 
     createGroupForm.addEventListener(
         "submit",
-        function (event) {
+        async function (event) {
 
             event.preventDefault();
 
@@ -151,30 +151,57 @@ if (createGroupForm) {
             }
 
 
-            const groupCode =
-                generateGroupCode();
+            try {
+
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/groups",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: groupName
+                        })
+                    }
+                );
 
 
-            groupResult.style.display = "block";
+                const data = await response.json();
 
 
-            groupResult.innerHTML = `
-                <h3>Group Created!</h3>
-
-                <p>
-                    Your group <strong>${groupName}</strong>
-                    is ready.
-                </p>
-
-                <p>
-                    Share this code with others:
-                </p>
-
-                <h2>${groupCode}</h2>
-            `;
+                groupResult.style.display = "block";
 
 
-            groupNameInput.value = "";
+                groupResult.innerHTML = `
+                    <h3>Group Created!</h3>
+
+                    <p>
+                        Your group <strong>${data.name}</strong>
+                        is ready.
+                    </p>
+
+                    <p>
+                        Share this code with others:
+                    </p>
+
+                    <h2>${data.code}</h2>
+                `;
+
+
+                groupNameInput.value = "";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Group creation failed:",
+                    error
+                );
+
+            }
 
         }
     );
@@ -184,11 +211,12 @@ if (createGroupForm) {
 
 /* Join Group */
 
+
 if (joinGroupForm) {
 
     joinGroupForm.addEventListener(
         "submit",
-        function (event) {
+        async function (event) {
 
             event.preventDefault();
 
@@ -204,23 +232,118 @@ if (joinGroupForm) {
             }
 
 
-            groupResult.style.display = "block";
+            try {
+
+                const response = await fetch(
+                    "http://127.0.0.1:8000/api/groups/join",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            code: groupCode
+                        })
+                    }
+                );
 
 
-            groupResult.innerHTML = `
-                <h3>Joining Group</h3>
-
-                <p>
-                    Attempting to join group:
-                </p>
-
-                <h2>${groupCode}</h2>
-            `;
+                const data = await response.json();
 
 
-            groupCodeInput.value = "";
+                if (!response.ok) {
+
+                    groupResult.style.display = "block";
+
+
+                    groupResult.innerHTML = `
+                        <h3>Unable to Join</h3>
+
+                        <p>
+                            ${data.detail}
+                        </p>
+                    `;
+
+
+                    return;
+                }
+
+
+                groupResult.style.display = "block";
+
+
+                groupResult.innerHTML = `
+                    <h3>Joined Successfully!</h3>
+
+                    <p>
+                        You joined <strong>${data.name}</strong>
+                    </p>
+
+                    <p>
+                        Group code:
+                    </p>
+
+                    <h2>${data.code}</h2>
+                `;
+
+
+                groupCodeInput.value = "";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Group join failed:",
+                    error
+                );
+
+
+                groupResult.style.display = "block";
+
+
+                groupResult.innerHTML = `
+                    <h3>Connection Error</h3>
+
+                    <p>
+                        Unable to connect to the server.
+                    </p>
+                `;
+
+            }
 
         }
     );
 
 }
+
+
+//BACKEND CONNECTION TEST
+
+async function checkBackend() {
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/status"
+        );
+
+        const data = await response.json();
+
+        console.log("Backend connected:", data);
+
+    } catch (error) {
+
+        console.error(
+            "Backend connection failed:",
+            error
+        );
+
+    }
+
+}
+
+
+checkBackend();
+
