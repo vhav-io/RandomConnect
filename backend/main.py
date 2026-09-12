@@ -86,6 +86,7 @@ def create_group(group: Group):
         "name": group.name,
         "code": group_code
     }
+    
 @app.post("/api/groups/join")
 def join_group(group: JoinGroup):
 
