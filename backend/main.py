@@ -1,11 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-import secrets
 
+from backend.database import initialize_database
+from backend.routers.groups import router as groups_router
+
+
+# APP
 
 app = FastAPI()
 
+
+# CORS
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,38 +20,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# TEMPORARY DATA STORAGE
-groups = {}
 
-# PYDANTIC MODELS
+# STARTUP
 
-class Group(BaseModel):
-    name: str = Field(
-        min_length=3,
-        max_length=50
-    )
+@app.on_event("startup")
+def startup():
 
+    initialize_database()
 
-class JoinGroup(BaseModel):
-    code: str = Field(
-        min_length=6,
-        max_length=6
-    )
-
-# HELPER FUNCTIONS
-def generate_group_code():
-
-    while True:
-
-        code = secrets.token_hex(3).upper()
-
-        if code not in groups:
-            return code
 
 # BASIC ROUTES
 
 @app.get("/")
 def home():
+
     return {
         "message": "RandomConnect backend is running"
     }
@@ -54,6 +41,7 @@ def home():
 
 @app.get("/health")
 def health():
+
     return {
         "status": "healthy"
     }
@@ -61,6 +49,7 @@ def health():
 
 @app.get("/api/status")
 def get_status():
+
     return {
         "application": "RandomConnect",
         "backend": "running",
@@ -68,62 +57,6 @@ def get_status():
     }
 
 
-# GROUP ROUTES
+# ROUTERS
 
-@app.post("/api/groups")
-def create_group(group: Group):
-
-    group_code = generate_group_code()
-
-
-    groups[group_code] = {
-        "name": group.name
-    }
-
-
-    return {
-        "message": "Group created successfully",
-        "name": group.name,
-        "code": group_code
-    }
-    
-@app.post("/api/groups/join")
-def join_group(group: JoinGroup):
-
-    group_code = group.code.upper()
-
-
-    if group_code not in groups:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Group not found"
-        )
-
-
-    return {
-        "message": "Successfully joined group",
-        "code": group_code,
-        "name": groups[group_code]["name"]
-    }
-
-# GET GROUP
-
-@app.get("/api/groups/{group_code}")
-def get_group(group_code: str):
-
-    group_code = group_code.upper()
-
-
-    if group_code not in groups:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Group not found"
-        )
-
-
-    return {
-        "code": group_code,
-        "name": groups[group_code]["name"]
-    }
+app.include_router(groups_router)
