@@ -15,7 +15,7 @@ const messageInput = document.getElementById("message-input");
 
 const messages = document.getElementById("messages");
 
-
+const API_URL = "https://randomconnect-api.onrender.com";
 if (matchingScreen && conversation) {
 
     setTimeout(function () {
@@ -154,7 +154,7 @@ if (createGroupForm) {
             try {
 
                 const response = await fetch(
-                    "http://127.0.0.1:8000/api/groups",
+                    `${API_URL}/api/groups`,
                     {
                         method: "POST",
 
@@ -235,7 +235,7 @@ if (joinGroupForm) {
             try {
 
                 const response = await fetch(
-                    "http://127.0.0.1:8000/api/groups/join",
+                    `${API_URL}/api/groups/join`,
                     {
                         method: "POST",
 
@@ -326,7 +326,7 @@ async function checkBackend() {
     try {
 
         const response = await fetch(
-            "http://127.0.0.1:8000/api/status"
+            `${API_URL}/api/status`
         );
 
         const data = await response.json();
