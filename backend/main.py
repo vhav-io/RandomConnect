@@ -1,16 +1,20 @@
+import asyncio
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-from backend.database import initialize_database
+from backend.database import (
+    initialize_database,
+    execute_query
+)
+
 from backend.routers.groups import router as groups_router
+from backend.routers.chat import router as chat_router
 
-
-# APP
 
 app = FastAPI()
 
-
-# CORS
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,15 +25,22 @@ app.add_middleware(
 )
 
 
-# STARTUP
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
+)
+
 
 @app.on_event("startup")
-def startup():
+async def startup():
 
     initialize_database()
 
+    asyncio.create_task(
+        cleanup_inactive_groups()
+    )
 
-# BASIC ROUTES
 
 @app.get("/")
 def home():
@@ -57,6 +68,29 @@ def get_status():
     }
 
 
-# ROUTERS
+async def cleanup_inactive_groups():
+
+    while True:
+
+        try:
+
+            execute_query(
+                """
+                DELETE FROM groups
+                WHERE last_activity <
+                NOW() - INTERVAL '10 minutes'
+                """
+            )
+
+        except Exception as error:
+
+            print(
+                "Group cleanup error:",
+                error
+            )
+
+        await asyncio.sleep(60)
+
 
 app.include_router(groups_router)
+app.include_router(chat_router)

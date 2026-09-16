@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
-
 import secrets
+import os
+import uuid
 
 from backend.database import (
     execute_query,
-    fetch_one
+    fetch_one,
+    fetch_all
 )
 
 
@@ -15,7 +17,11 @@ router = APIRouter(
 )
 
 
-# PYDANTIC MODELS
+UPLOAD_DIR = "uploads"
+MAX_FILE_SIZE = 50 * 1024 * 1024
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 
 class Group(BaseModel):
 
@@ -33,24 +39,47 @@ class JoinGroup(BaseModel):
     )
 
 
-# HELPER FUNCTIONS
+class Message(BaseModel):
+
+    sender_id: str = Field(
+        min_length=1,
+        max_length=100
+    )
+
+    content: str = Field(
+        min_length=1,
+        max_length=5000
+    )
+
+    message_type: str = Field(
+        default="text",
+        max_length=20
+    )
+
 
 def generate_group_code():
 
+    characters = (
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "0123456789"
+    )
+
     while True:
 
-        code = secrets.token_hex(3).upper()
+        code = "".join(
+            secrets.choice(characters)
+            for _ in range(6)
+        )
 
         existing_group = fetch_one(
-            "SELECT code FROM groups WHERE code = ?",
+            "SELECT code FROM groups WHERE code = %s",
             (code,)
         )
 
         if existing_group is None:
+
             return code
 
-
-# CREATE GROUP
 
 @router.post("")
 def create_group(group: Group):
@@ -60,7 +89,7 @@ def create_group(group: Group):
     execute_query(
         """
         INSERT INTO groups (name, code)
-        VALUES (?, ?)
+        VALUES (%s, %s)
         """,
         (
             group.name,
@@ -75,8 +104,6 @@ def create_group(group: Group):
     }
 
 
-# JOIN GROUP
-
 @router.post("/join")
 def join_group(group: JoinGroup):
 
@@ -86,7 +113,7 @@ def join_group(group: JoinGroup):
         """
         SELECT *
         FROM groups
-        WHERE code = ?
+        WHERE code = %s
         """,
         (group_code,)
     )
@@ -105,8 +132,6 @@ def join_group(group: JoinGroup):
     }
 
 
-# GET GROUP
-
 @router.get("/{group_code}")
 def get_group(group_code: str):
 
@@ -116,7 +141,7 @@ def get_group(group_code: str):
         """
         SELECT *
         FROM groups
-        WHERE code = ?
+        WHERE code = %s
         """,
         (group_code,)
     )
@@ -132,4 +157,266 @@ def get_group(group_code: str):
         "id": group["id"],
         "code": group["code"],
         "name": group["name"]
+    }
+
+
+@router.get("/{group_code}/messages")
+def get_messages(group_code: str):
+
+    group = fetch_one(
+        """
+        SELECT id
+        FROM groups
+        WHERE code = %s
+        """,
+        (group_code.upper(),)
+    )
+
+    if group is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Group not found"
+        )
+
+    messages = fetch_all(
+        """
+        SELECT
+            id,
+            sender_id,
+            message_type,
+            content,
+            created_at
+        FROM messages
+        WHERE group_id = %s
+        ORDER BY created_at ASC
+        """,
+        (group["id"],)
+    )
+
+    return messages
+
+
+@router.post("/{group_code}/messages")
+def send_message(
+    group_code: str,
+    message: Message
+):
+
+    group = fetch_one(
+        """
+        SELECT id
+        FROM groups
+        WHERE code = %s
+        """,
+        (group_code.upper(),)
+    )
+
+    if group is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Group not found"
+        )
+
+    if message.message_type not in [
+        "text",
+        "image",
+        "video",
+        "file"
+    ]:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid message type"
+        )
+
+    new_message = fetch_one(
+        """
+        INSERT INTO messages (
+            group_id,
+            sender_id,
+            message_type,
+            content
+        )
+        VALUES (%s, %s, %s, %s)
+        RETURNING
+            id,
+            sender_id,
+            message_type,
+            content,
+            created_at
+        """,
+        (
+            group["id"],
+            message.sender_id,
+            message.message_type,
+            message.content
+        )
+    )
+
+    execute_query(
+        """
+        UPDATE groups
+        SET last_activity = NOW()
+        WHERE id = %s
+        """,
+        (group["id"],)
+    )
+
+    return new_message
+
+
+@router.post("/{group_code}/upload")
+async def upload_file(
+    group_code: str,
+    file: UploadFile = File(...)
+):
+
+    group = fetch_one(
+        """
+        SELECT id
+        FROM groups
+        WHERE code = %s
+        """,
+        (group_code.upper(),)
+    )
+
+    if group is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Group not found"
+        )
+
+
+    file_size = 0
+
+    file_extension = ""
+
+    if file.filename and "." in file.filename:
+
+        file_extension = os.path.splitext(
+            file.filename
+        )[1].lower()
+
+
+    allowed_extensions = {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".webp",
+        ".mp4",
+        ".webm",
+        ".mov",
+        ".avi",
+        ".mkv",
+        ".pdf",
+        ".txt",
+        ".zip",
+        ".doc",
+        ".docx",
+        ".xls",
+        ".xlsx",
+        ".ppt",
+        ".pptx"
+    }
+
+
+    if file_extension not in allowed_extensions:
+
+        raise HTTPException(
+            status_code=400,
+            detail="File type not supported"
+        )
+
+
+    safe_filename = (
+        f"{uuid.uuid4().hex}"
+        f"{file_extension}"
+    )
+
+
+    file_path = os.path.join(
+        UPLOAD_DIR,
+        safe_filename
+    )
+
+
+    try:
+
+        with open(
+            file_path,
+            "wb"
+        ) as output_file:
+
+            while True:
+
+                chunk = await file.read(
+                    1024 * 1024
+                )
+
+                if not chunk:
+                    break
+
+                file_size += len(chunk)
+
+                if file_size > MAX_FILE_SIZE:
+
+                    output_file.close()
+
+                    os.remove(file_path)
+
+                    raise HTTPException(
+                        status_code=413,
+                        detail="File is larger than 50 MB"
+                    )
+
+                output_file.write(chunk)
+
+
+    except HTTPException:
+
+        raise
+
+
+    except Exception as error:
+
+        if os.path.exists(file_path):
+
+            os.remove(file_path)
+
+        print(
+            "File upload error:",
+            error
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="File upload failed"
+        )
+
+
+    file_url = (
+        f"/uploads/{safe_filename}"
+    )
+
+
+    execute_query(
+        """
+        UPDATE groups
+        SET last_activity = NOW()
+        WHERE id = %s
+        """,
+        (group["id"],)
+    )
+
+
+    return {
+        "message": "File uploaded successfully",
+        "filename": file.filename,
+        "url": file_url,
+        "size": file_size,
+        "content_type": file.content_type
     }

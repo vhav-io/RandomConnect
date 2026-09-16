@@ -1,21 +1,39 @@
 /* =========================
+   BACKEND
+========================= */
+
+const API_URL = "http://127.0.0.1:8000";
+
+
+/* =========================
    RANDOM CHAT
 ========================= */
 
-const matchingScreen = document.getElementById("matching-screen");
-const conversation = document.getElementById("conversation");
+const matchingScreen =
+    document.getElementById("matching-screen");
 
-const chatStatus = document.getElementById("chat-status");
-const chatDescription = document.getElementById("chat-description");
+const conversation =
+    document.getElementById("conversation");
 
-const chatActionBtn = document.getElementById("chat-action-btn");
+const chatStatus =
+    document.getElementById("chat-status");
 
-const messageForm = document.getElementById("message-form");
-const messageInput = document.getElementById("message-input");
+const chatDescription =
+    document.getElementById("chat-description");
 
-const messages = document.getElementById("messages");
+const chatActionBtn =
+    document.getElementById("chat-action-btn");
 
-const API_URL = "https://randomconnect-api.onrender.com";
+const messageForm =
+    document.getElementById("message-form");
+
+const messageInput =
+    document.getElementById("message-input");
+
+const messages =
+    document.getElementById("messages");
+
+
 if (matchingScreen && conversation) {
 
     setTimeout(function () {
@@ -29,7 +47,8 @@ if (matchingScreen && conversation) {
         chatDescription.textContent =
             "You are chatting anonymously.";
 
-        chatActionBtn.textContent = "Leave Chat";
+        chatActionBtn.textContent =
+            "Leave Chat";
 
     }, 2000);
 
@@ -38,50 +57,59 @@ if (matchingScreen && conversation) {
 
 if (messageForm) {
 
-    messageForm.addEventListener("submit", function (event) {
+    messageForm.addEventListener(
+        "submit",
+        function (event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const messageText = messageInput.value.trim();
+            const messageText =
+                messageInput.value.trim();
 
+            if (messageText === "") {
+                return;
+            }
 
-        if (messageText === "") {
-            return;
+            const message =
+                document.createElement("div");
+
+            message.classList.add(
+                "message",
+                "sent"
+            );
+
+            const paragraph =
+                document.createElement("p");
+
+            paragraph.textContent =
+                messageText;
+
+            message.appendChild(paragraph);
+
+            messages.appendChild(message);
+
+            messageInput.value = "";
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
         }
-
-
-        const message = document.createElement("div");
-
-        message.classList.add("message", "sent");
-
-
-        const paragraph = document.createElement("p");
-
-        paragraph.textContent = messageText;
-
-
-        message.appendChild(paragraph);
-
-        messages.appendChild(message);
-
-
-        messageInput.value = "";
-
-
-        messages.scrollTop = messages.scrollHeight;
-
-    });
+    );
 
 }
 
 
 if (chatActionBtn) {
 
-    chatActionBtn.addEventListener("click", function () {
+    chatActionBtn.addEventListener(
+        "click",
+        function () {
 
-        window.location.href = "index.html";
+            window.location.href =
+                "index.html";
 
-    });
+        }
+    );
 
 }
 
@@ -91,47 +119,34 @@ if (chatActionBtn) {
 ========================= */
 
 const createGroupForm =
-    document.getElementById("create-group-form");
+    document.getElementById(
+        "create-group-form"
+    );
 
 const joinGroupForm =
-    document.getElementById("join-group-form");
+    document.getElementById(
+        "join-group-form"
+    );
 
 const groupNameInput =
-    document.getElementById("group-name");
+    document.getElementById(
+        "group-name"
+    );
 
 const groupCodeInput =
-    document.getElementById("group-code");
+    document.getElementById(
+        "group-code"
+    );
 
 const groupResult =
-    document.getElementById("group-result");
+    document.getElementById(
+        "group-result"
+    );
 
 
-function generateGroupCode() {
-
-    const characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    let code = "";
-
-
-    for (let i = 0; i < 6; i++) {
-
-        const randomIndex =
-            Math.floor(
-                Math.random() * characters.length
-            );
-
-        code += characters[randomIndex];
-
-    }
-
-
-    return code;
-
-}
-
-
-/* Create Group */
+/* =========================
+   CREATE GROUP
+========================= */
 
 if (createGroupForm) {
 
@@ -141,57 +156,85 @@ if (createGroupForm) {
 
             event.preventDefault();
 
-
             const groupName =
                 groupNameInput.value.trim();
-
 
             if (groupName === "") {
                 return;
             }
 
-
             try {
 
-                const response = await fetch(
-                    `${API_URL}/api/groups`,
-                    {
-                        method: "POST",
+                const response =
+                    await fetch(
+                        `${API_URL}/api/groups`,
+                        {
+                            method: "POST",
 
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-                        body: JSON.stringify({
-                            name: groupName
-                        })
-                    }
-                );
-
-
-                const data = await response.json();
+                            body: JSON.stringify({
+                                name: groupName
+                            })
+                        }
+                    );
 
 
-                groupResult.style.display = "block";
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    groupResult.style.display =
+                        "block";
+
+                    groupResult.innerHTML = `
+                        <h3>Unable to Create Group</h3>
+                        <p>${data.detail || "Something went wrong."}</p>
+                    `;
+
+                    return;
+                }
+
+
+                groupResult.style.display =
+                    "block";
 
 
                 groupResult.innerHTML = `
                     <h3>Group Created!</h3>
 
                     <p>
-                        Your group <strong>${data.name}</strong>
+                        Your group
+                        <strong>${data.name}</strong>
                         is ready.
                     </p>
 
                     <p>
-                        Share this code with others:
+                        Group code:
                     </p>
 
                     <h2>${data.code}</h2>
+
+                    <p>
+                        Opening group chat...
+                    </p>
                 `;
 
 
                 groupNameInput.value = "";
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        `group-chat.html?code=${encodeURIComponent(data.code)}`;
+
+                }, 800);
 
 
             } catch (error) {
@@ -201,6 +244,19 @@ if (createGroupForm) {
                     error
                 );
 
+
+                groupResult.style.display =
+                    "block";
+
+
+                groupResult.innerHTML = `
+                    <h3>Connection Error</h3>
+
+                    <p>
+                        Unable to connect to the server.
+                    </p>
+                `;
+
             }
 
         }
@@ -209,8 +265,9 @@ if (createGroupForm) {
 }
 
 
-/* Join Group */
-
+/* =========================
+   JOIN GROUP
+========================= */
 
 if (joinGroupForm) {
 
@@ -234,62 +291,73 @@ if (joinGroupForm) {
 
             try {
 
-                const response = await fetch(
-                    `${API_URL}/api/groups/join`,
-                    {
-                        method: "POST",
+                const response =
+                    await fetch(
+                        `${API_URL}/api/groups/join`,
+                        {
+                            method: "POST",
 
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-                        body: JSON.stringify({
-                            code: groupCode
-                        })
-                    }
-                );
+                            body: JSON.stringify({
+                                code: groupCode
+                            })
+                        }
+                    );
 
 
-                const data = await response.json();
+                const data =
+                    await response.json();
 
 
                 if (!response.ok) {
 
-                    groupResult.style.display = "block";
+                    groupResult.style.display =
+                        "block";
 
 
                     groupResult.innerHTML = `
                         <h3>Unable to Join</h3>
 
                         <p>
-                            ${data.detail}
+                            ${data.detail || "Group not found."}
                         </p>
                     `;
-
 
                     return;
                 }
 
 
-                groupResult.style.display = "block";
+                groupResult.style.display =
+                    "block";
 
 
                 groupResult.innerHTML = `
                     <h3>Joined Successfully!</h3>
 
                     <p>
-                        You joined <strong>${data.name}</strong>
+                        You joined
+                        <strong>${data.name}</strong>
                     </p>
 
                     <p>
-                        Group code:
+                        Opening group chat...
                     </p>
-
-                    <h2>${data.code}</h2>
                 `;
 
 
                 groupCodeInput.value = "";
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        `group-chat.html?code=${encodeURIComponent(data.code)}`;
+
+                }, 800);
 
 
             } catch (error) {
@@ -300,7 +368,8 @@ if (joinGroupForm) {
                 );
 
 
-                groupResult.style.display = "block";
+                groupResult.style.display =
+                    "block";
 
 
                 groupResult.innerHTML = `
@@ -319,19 +388,29 @@ if (joinGroupForm) {
 }
 
 
-//BACKEND CONNECTION TEST
+/* =========================
+   BACKEND CONNECTION TEST
+========================= */
 
 async function checkBackend() {
 
     try {
 
-        const response = await fetch(
-            `${API_URL}/api/status`
+        const response =
+            await fetch(
+                `${API_URL}/api/status`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Backend connected:",
+            data
         );
 
-        const data = await response.json();
-
-        console.log("Backend connected:", data);
 
     } catch (error) {
 
@@ -346,4 +425,3 @@ async function checkBackend() {
 
 
 checkBackend();
-

@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Group Chat - RandomConnect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --background: #f6f7fb;
+            --surface: #ffffff;
+            --surface-2: #eef3fb;
+            --text: #14213d;
+            --muted: #667085;
+            --primary: #3478f6;
+            --primary-dark: #2563d8;
+            --border: #dce4f0;
+        }
+
+        body.dark {
+            --background: #0f172a;
+            --surface: #172033;
+            --surface-2: #202b40;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: var(--background);
+
+            background-image:
+                radial-gradient(
+                    #dce8ff 1.5px,
+                    transparent 1.5px
+                );
+
+            background-size: 24px 24px;
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        body.dark {
+            background-image:
+                radial-gradient(
+                    #263550 1.5px,
+                    transparent 1.5px
+                );
+        }
+
+        /* HEADER */
+
+        header {
+            height: 70px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 32px;
+
+            background: var(--surface);
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .logo {
+            text-decoration: none;
+
+            color: var(--text);
+
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        #theme-toggle {
+            border: 1px solid var(--border);
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            padding: 9px 15px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+        /* PAGE */
+
+        .page {
+            width: min(
+                1000px,
+                calc(100% - 32px)
+            );
+
+            height: calc(100vh - 102px);
+
+            min-height: 500px;
+
+            margin: 16px auto;
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 20px 50px
+                rgba(20, 33, 61, 0.10);
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* CHAT HEADER */
+
+        .chat-header {
+            padding: 22px 26px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .chat-header h1 {
+            font-size: 22px;
+        }
+
+        .chat-header p {
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        .status::before {
+            content: "";
+
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background: #f4b942;
+        }
+
+        .status.connected::before {
+            background: #22c55e;
+        }
+
+        .status.disconnected::before {
+            background: #ef4444;
+        }
+
+        /* BODY */
+
+        .chat-body {
+            flex: 1;
+
+            min-height: 0;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages {
+            flex: 1;
+
+            overflow-y: auto;
+
+            padding: 26px;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 12px;
+
+            background: var(--background);
+        }
+
+        .empty {
+            margin: auto;
+
+            text-align: center;
+
+            color: var(--muted);
+        }
+
+        .chat-message {
+            max-width: 70%;
+
+            align-self: flex-start;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+        .chat-message.own {
+            align-self: flex-end;
+
+            align-items: flex-end;
+        }
+
+        .bubble {
+            padding: 11px 15px;
+
+            border-radius:
+                16px 16px 16px 4px;
+
+            background: var(--surface);
+
+            border:
+                1px solid var(--border);
+
+            word-break: break-word;
+
+            line-height: 1.45;
+        }
+
+        .chat-message.own .bubble {
+            background: var(--primary);
+
+            color: white;
+
+            border-color: var(--primary);
+
+            border-radius:
+                16px 16px 4px 16px;
+        }
+
+        .meta {
+            padding: 0 5px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+        /* FILES */
+
+        .shared-image {
+            max-width: 320px;
+            max-height: 320px;
+
+            border-radius: 12px;
+
+            display: block;
+        }
+
+        .shared-video {
+            max-width: 360px;
+            width: 100%;
+
+            border-radius: 12px;
+
+            display: block;
+        }
+
+        .file-link {
+            color: inherit;
+
+            font-weight: 600;
+
+            text-decoration: none;
+        }
+
+        .file-link:hover {
+            text-decoration: underline;
+        }
+
+        /* COMPOSER */
+
+        .message-form {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 15px;
+
+            background: var(--surface);
+
+            border-top:
+                1px solid var(--border);
+        }
+
+        .file-button {
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            background: var(--surface-2);
+
+            color: var(--text);
+
+            cursor: pointer;
+
+            font-size: 22px;
+
+            flex-shrink: 0;
+        }
+
+        .file-button:hover {
+            border-color: var(--primary);
+        }
+
+        .message-input {
+            flex: 1;
+
+            min-width: 0;
+
+            height: 46px;
+
+            padding: 0 15px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            outline: none;
+
+            background: var(--surface-2);
+
+            color: var(--text);
+
+            font-size: 15px;
+        }
+
+        .message-input:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(52, 120, 246, 0.12);
+        }
+
+        .send-button {
+            height: 46px;
+
+            padding: 0 22px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: var(--primary);
+
+            color: white;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .send-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+
+            cursor: not-allowed;
+        }
+
+        .file-note {
+            padding:
+                0 18px
+                10px;
+
+            color: var(--muted);
+
+            background: var(--surface);
+
+            font-size: 11px;
+        }
+
+        /* ACTIONS */
+
+        .chat-actions {
+            padding: 12px 18px;
+
+            display: flex;
+            justify-content: flex-end;
+
+            border-top:
+                1px solid var(--border);
+
+            background: var(--surface);
+        }
+
+        .leave-button {
+            border: none;
+
+            background: transparent;
+
+            color: #ef4444;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+        @media (max-width: 650px) {
+
+            header {
+                padding: 0 16px;
+            }
+
+            .page {
+                width: 100%;
+
+                height:
+                    calc(100vh - 70px);
+
+                margin: 0;
+
+                border-radius: 0;
+
+                border-left: none;
+                border-right: none;
+            }
+
+            .chat-header {
+                padding: 18px;
+            }
+
+            .messages {
+                padding: 18px;
+            }
+
+            .chat-message {
+                max-width: 85%;
+            }
+
+            .message-form {
+                padding: 10px;
+            }
+
+            .send-button {
+                padding: 0 17px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <a
+        href="index.html"
+        class="logo"
+    >
+        RandomConnect
+    </a>
+
+
+    <button
+        id="theme-toggle"
+        type="button"
+    >
+        Dark
+    </button>
+
+</header>
+
+
+<main class="page">
+
+
+    <div class="chat-header">
+
+        <div>
+
+            <h1 id="group-title">
+                Loading...
+            </h1>
+
+            <p>
+                Code:
+                <strong id="group-code">
+                    ...
+                </strong>
+            </p>
+
+        </div>
+
+
+        <div
+            id="group-chat-status"
+            class="status"
+        >
+            Connecting...
+        </div>
+
+    </div>
+
+
+    <div class="chat-body">
+
+
+        <div
+            id="group-messages"
+            class="messages"
+        >
+
+            <div
+                id="empty-message"
+                class="empty"
+            >
+                No messages yet.<br>
+                Start the conversation.
+            </div>
+
+        </div>
+
+
+        <p
+            id="upload-status"
+            class="file-note"
+        ></p>
+
+
+        <form
+            id="group-message-form"
+            class="message-form"
+        >
+
+            <label
+                class="file-button"
+                title="Send file"
+            >
+
+                +
+
+                <input
+                    type="file"
+                    id="group-file-input"
+                    hidden
+                >
+
+            </label>
+
+
+            <input
+                type="text"
+                id="group-message-input"
+                class="message-input"
+                placeholder="Type a message..."
+                autocomplete="off"
+                maxlength="5000"
+            >
+
+
+            <button
+                type="submit"
+                id="send-button"
+                class="send-button"
+                disabled
+            >
+                Send
+            </button>
+
+        </form>
+
+
+    </div>
+
+
+    <div class="chat-actions">
+
+        <button
+            id="group-leave"
+            class="leave-button"
+            type="button"
+        >
+            Leave Group
+        </button>
+
+    </div>
+
+
+</main>
+
+
+<script>
+
+const API_URL =
+    "http://127.0.0.1:8000";
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const groupCode =
+    params.get("code");
+
+
+const anonymousId =
+    getAnonymousId();
+
+
+let groupSocket = null;
+
+
+const groupTitle =
+    document.getElementById(
+        "group-title"
+    );
+
+
+const groupCodeElement =
+    document.getElementById(
+        "group-code"
+    );
+
+
+const groupMessages =
+    document.getElementById(
+        "group-messages"
+    );
+
+
+const emptyMessage =
+    document.getElementById(
+        "empty-message"
+    );
+
+
+const groupMessageForm =
+    document.getElementById(
+        "group-message-form"
+    );
+
+
+const groupMessageInput =
+    document.getElementById(
+        "group-message-input"
+    );
+
+
+const groupFileInput =
+    document.getElementById(
+        "group-file-input"
+    );
+
+
+const groupChatStatus =
+    document.getElementById(
+        "group-chat-status"
+    );
+
+
+const sendButton =
+    document.getElementById(
+        "send-button"
+    );
+
+
+const uploadStatus =
+    document.getElementById(
+        "upload-status"
+    );
+
+
+const themeToggle =
+    document.getElementById(
+        "theme-toggle"
+    );
+
+
+function getAnonymousId() {
+
+    let id =
+        localStorage.getItem(
+            "randomconnect_id"
+        );
+
+
+    if (!id) {
+
+        id =
+            crypto.randomUUID();
+
+
+        localStorage.setItem(
+            "randomconnect_id",
+            id
+        );
+
+    }
+
+
+    return id;
+
+}
+
+
+/* THEME */
+
+const savedTheme =
+    localStorage.getItem(
+        "randomconnect_theme"
+    );
+
+
+if (savedTheme === "dark") {
+
+    document.body.classList.add(
+        "dark"
+    );
+
+}
+
+
+function updateThemeButton() {
+
+    const dark =
+        document.body.classList.contains(
+            "dark"
+        );
+
+
+    themeToggle.textContent =
+        dark
+            ? "Light"
+            : "Dark";
+
+}
+
+
+updateThemeButton();
+
+
+themeToggle.addEventListener(
+    "click",
+    function () {
+
+        document.body.classList.toggle(
+            "dark"
+        );
+
+
+        const dark =
+            document.body.classList.contains(
+                "dark"
+            );
+
+
+        localStorage.setItem(
+            "randomconnect_theme",
+            dark
+                ? "dark"
+                : "light"
+        );
+
+
+        updateThemeButton();
+
+    }
+);
+
+
+/* LOAD GROUP */
+
+async function loadGroup() {
+
+    const response =
+        await fetch(
+            `${API_URL}/api/groups/${encodeURIComponent(groupCode)}`
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Group not found"
+        );
+
+    }
+
+
+    const group =
+        await response.json();
+
+
+    groupTitle.textContent =
+        group.name;
+
+
+    groupCodeElement.textContent =
+        group.code;
+
+}
+
+
+/* LOAD OLD MESSAGES */
+
+async function loadMessages() {
+
+    const response =
+        await fetch(
+            `${API_URL}/api/groups/${encodeURIComponent(groupCode)}/messages`
+        );
+
+
+    if (!response.ok) {
+
+        return;
+
+    }
+
+
+    const messages =
+        await response.json();
+
+
+    messages.forEach(
+        addGroupMessage
+    );
+
+}
+
+
+/* DISPLAY MESSAGE */
+
+function addGroupMessage(
+    message
+) {
+
+    emptyMessage.style.display =
+        "none";
+
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className =
+        message.sender_id === anonymousId
+            ? "chat-message own"
+            : "chat-message";
+
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+
+    bubble.className =
+        "bubble";
+
+
+    if (
+        message.message_type ===
+        "file"
+    ) {
+
+        const url =
+            `${API_URL}/api/files/${message.content}`;
+
+
+        if (
+            message.content_type &&
+            message.content_type.startsWith(
+                "image/"
+            )
+        ) {
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.src =
+                url;
+
+
+            image.alt =
+                message.filename ||
+                "Shared image";
+
+
+            image.className =
+                "shared-image";
+
+
+            bubble.appendChild(
+                image
+            );
+
+        }
+
+
+        else if (
+            message.content_type &&
+            message.content_type.startsWith(
+                "video/"
+            )
+        ) {
+
+            const video =
+                document.createElement(
+                    "video"
+                );
+
+
+            video.src =
+                url;
+
+
+            video.controls =
+                true;
+
+
+            video.className =
+                "shared-video";
+
+
+            bubble.appendChild(
+                video
+            );
+
+        }
+
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            url;
+
+
+        link.target =
+            "_blank";
+
+
+        link.className =
+            "file-link";
+
+
+        link.textContent =
+            message.filename ||
+            "Open file";
+
+
+        bubble.appendChild(
+            link
+        );
+
+    }
+
+
+    else {
+
+        bubble.textContent =
+            message.content;
+
+    }
+
+
+    const meta =
+        document.createElement(
+            "small"
+        );
+
+
+    meta.className =
+        "meta";
+
+
+    meta.textContent =
+        message.sender_id === anonymousId
+            ? "You"
+            : "Anonymous";
+
+
+    wrapper.appendChild(
+        bubble
+    );
+
+
+    wrapper.appendChild(
+        meta
+    );
+
+
+    groupMessages.appendChild(
+        wrapper
+    );
+
+
+    groupMessages.scrollTop =
+        groupMessages.scrollHeight;
+
+}
+
+
+/* WEBSOCKET */
+
+function connectToGroup() {
+
+    const socketUrl =
+        `ws://127.0.0.1:8000/ws/group/` +
+        `${encodeURIComponent(groupCode)}/` +
+        `${encodeURIComponent(anonymousId)}`;
+
+
+    groupSocket =
+        new WebSocket(
+            `ws://127.0.0.1:8000/ws/groups/` +
+            `${encodeURIComponent(groupCode)}`
+        );
+
+    groupSocket.addEventListener(
+        "open",
+        function () {
+
+            groupChatStatus.textContent =
+                "Connected";
+
+
+            groupChatStatus.classList.add(
+                "connected"
+            );
+
+
+            sendButton.disabled =
+                false;
+
+        }
+    );
+
+
+    groupSocket.addEventListener(
+        "message",
+        function (event) {
+
+            const data =
+                JSON.parse(
+                    event.data
+                );
+
+
+            if (
+                data.type ===
+                "connected"
+            ) {
+
+                groupTitle.textContent =
+                    data.group.name;
+
+            }
+
+
+            if (
+                data.type ===
+                "message"
+            ) {
+
+                addGroupMessage(
+                    data
+                );
+
+            }
+
+
+            if (
+                data.type ===
+                "group_deleted"
+            ) {
+
+                groupChatStatus.textContent =
+                    "Group deleted";
+
+
+                alert(
+                    data.reason
+                );
+
+
+                window.location.href =
+                    "group.html";
+
+            }
+
+        }
+    );
+
+
+    groupSocket.addEventListener(
+        "close",
+        function () {
+
+            groupChatStatus.textContent =
+                "Disconnected";
+
+
+            groupChatStatus.classList.remove(
+                "connected"
+            );
+
+
+            groupChatStatus.classList.add(
+                "disconnected"
+            );
+
+
+            sendButton.disabled =
+                true;
+
+        }
+    );
+
+
+    groupSocket.addEventListener(
+        "error",
+        function (error) {
+
+            console.error(
+                "WebSocket error:",
+                error
+            );
+
+
+            groupChatStatus.textContent =
+                "Connection error";
+
+
+            sendButton.disabled =
+                true;
+
+        }
+    );
+
+}
+
+
+/* SEND MESSAGE */
+
+groupMessageForm.addEventListener(
+    "submit",
+    function (event) {
+
+        event.preventDefault();
+
+
+        const content =
+            groupMessageInput.value.trim();
+
+
+        if (!content) {
+            return;
+        }
+
+
+        if (
+            !groupSocket ||
+            groupSocket.readyState !==
+            WebSocket.OPEN
+        ) {
+
+            return;
+
+        }
+
+
+        groupSocket.send(
+            JSON.stringify({
+
+                type: "message",
+
+                sender_id: anonymousId,
+
+                content: content
+
+            })
+        );
+
+
+        groupMessageInput.value =
+            "";
+
+
+        groupMessageInput.focus();
+
+    }
+);
+
+
+/* FILE UPLOAD */
+
+groupFileInput.addEventListener(
+    "change",
+    async function () {
+
+        const file =
+            groupFileInput.files[0];
+
+
+        if (!file) {
+            return;
+        }
+
+
+        const maxSize =
+            50 * 1024 * 1024;
+
+
+        if (file.size > maxSize) {
+
+            alert(
+                "File must be 50 MB or smaller."
+            );
+
+
+            groupFileInput.value =
+                "";
+
+
+            return;
+
+        }
+
+
+        if (
+            !groupSocket ||
+            groupSocket.readyState !==
+            WebSocket.OPEN
+        ) {
+
+            alert(
+                "Chat is not connected yet."
+            );
+
+
+            groupFileInput.value =
+                "";
+
+
+            return;
+
+        }
+
+
+        uploadStatus.textContent =
+            `Uploading ${file.name}...`;
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/groups/` +
+                    `${encodeURIComponent(groupCode)}/files` +
+                    `?sender_id=${encodeURIComponent(anonymousId)}`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Upload failed"
+                );
+
+            }
+
+
+            groupSocket.send(
+                JSON.stringify({
+
+                    type: "file",
+
+                    file_id: data.id
+
+                })
+            );
+
+
+            uploadStatus.textContent =
+                "File sent.";
+
+
+        } catch (error) {
+
+            console.error(
+                "Upload error:",
+                error
+            );
+
+
+            uploadStatus.textContent =
+                "Upload failed.";
+
+
+            alert(
+                error.message
+            );
+
+        }
+
+
+        groupFileInput.value =
+            "";
+
+    }
+);
+
+
+/* LEAVE */
+
+document
+    .getElementById("group-leave")
+    .addEventListener(
+        "click",
+        function () {
+
+            if (groupSocket) {
+
+                groupSocket.close();
+
+            }
+
+
+            window.location.href =
+                "group.html";
+
+        }
+    );
+
+
+/* START */
+
+async function start() {
+
+    if (!groupCode) {
+
+        alert(
+            "No group code provided."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await loadGroup();
+
+        await loadMessages();
+
+        connectToGroup();
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "Group not found."
+        );
+
+
+        window.location.href =
+            "group.html";
+
+    }
+
+}
+
+
+start();
+
+</script>
+
+</body>
+
+</html>
