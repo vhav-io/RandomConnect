@@ -2,7 +2,17 @@
    BACKEND
 ========================= */
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL =
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost"
+        ? "http://127.0.0.1:8000"
+        : "https://randomconnect-api.onrender.com";
+
+const WS_URL =
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost"
+        ? "ws://127.0.0.1:8000"
+        : "wss://randomconnect-api.onrender.com";
 
 
 /* =========================
@@ -231,7 +241,7 @@ function connectRandomChat() {
 
     randomSocket =
         new WebSocket(
-            `${protocol}//127.0.0.1:8000/ws/random`
+            `${WS_URL}/ws/random`
         );
 
 
@@ -1249,7 +1259,7 @@ if (
 
         groupSocket =
             new WebSocket(
-                `${protocol}//127.0.0.1:8000/ws/groups/${
+                `${WS_URL}/ws/groups/${
                     encodeURIComponent(
                         groupCode
                     )
