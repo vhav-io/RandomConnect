@@ -4,28 +4,69 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Random Chat - RandomConnect</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
+
 <body>
 
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
     <header>
+
         <nav>
-            <div class="logo">
-                <a href="index.html">RandomConnect</a>
-            </div>
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+                RandomConnect
+            </a>
+
 
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="group.html">Groups</a></li>
+
+                <li>
+                    <a href="index.html">
+                        🏠 Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="group.html">
+                        👥 Groups
+                    </a>
+                </li>
+
+                <li>
+                    <button
+                        id="theme-toggle"
+                        class="theme-toggle"
+                        type="button"
+                    >
+                        ☀️ Light
+                    </button>
+                </li>
+
             </ul>
+
         </nav>
+
     </header>
 
+
+    <!-- =========================
+         RANDOM CHAT
+    ========================== -->
 
     <main>
 
@@ -33,83 +74,172 @@
 
             <div class="chat-container">
 
+
+                <!-- CHAT HEADER -->
+
                 <div class="chat-header">
 
-                    <div>
-                        <h1>Random Chat</h1>
+                    <div class="chat-header-left">
 
-                        <p id="chat-description">
-                            Connect with someone new anonymously.
-                        </p>
+                        <div class="chat-icon">
+                            💬
+                        </div>
+
+
+                        <div>
+
+                            <h1>
+                                Random Chat
+                            </h1>
+
+                            <p id="chat-description">
+                                Connect with someone new anonymously.
+                            </p>
+
+                        </div>
+
                     </div>
 
-                    <span class="status" id="chat-status">
-                        Finding someone...
-                    </span>
+
+                    <div class="chat-header-right">
+
+                        <div class="chat-online">
+
+                            <span class="online-dot"></span>
+
+                            <span id="chat-status">
+                                Finding someone...
+                            </span>
+
+                        </div>
+
+
+                        <div class="chat-online-description">
+                            Anonymous chat
+                        </div>
+
+                    </div>
 
                 </div>
 
 
+                <!-- =========================
+                     CHAT AREA
+                ========================== -->
+
                 <div class="chat-area">
 
-                    <!-- Matching Screen -->
 
-                    <div class="matching-screen" id="matching-screen">
+                    <!-- MATCHING -->
+
+                    <div
+                        class="matching-screen"
+                        id="matching-screen"
+                    >
+
+                        <div class="matching-icon">
+                            🔎
+                        </div>
 
                         <div class="matching-circle"></div>
 
-                        <h2>Looking for someone to chat with</h2>
+                        <h2>
+                            Looking for someone to chat with
+                        </h2>
 
-                        <p>
+                        <p id="matching-description">
                             Please wait while we find another person.
                         </p>
 
                     </div>
 
 
-                    <!-- Chat Screen -->
+                    <!-- =========================
+                         CONVERSATION
+                    ========================== -->
 
-                    <div class="conversation" id="conversation">
+                    <div
+                        class="conversation"
+                        id="conversation"
+                    >
 
-                        <div class="messages" id="messages">
 
-                            <div class="message received">
-                                <p>Hey! You are now connected.</p>
-                            </div>
+                        <div
+                            class="messages"
+                            id="messages"
+                        >
 
                         </div>
 
 
-                        <form class="message-form" id="message-form">
+                        <form
+                            class="message-form"
+                            id="message-form"
+                        >
 
                             <input
                                 type="text"
                                 id="message-input"
                                 placeholder="Type a message..."
                                 autocomplete="off"
+                                maxlength="5000"
                             >
 
-                            <button type="submit">
-                                Send
+
+                            <button
+                                type="submit"
+                            >
+                                ➤ Send
                             </button>
 
                         </form>
+
 
                     </div>
 
                 </div>
 
 
+                <!-- =========================
+                     ACTIONS
+                ========================== -->
+
                 <div class="chat-actions">
 
+
                     <button
+                        type="button"
+                        class="chat-btn"
+                        id="skip-btn"
+                    >
+                        ⏭️ Skip
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="chat-btn secondary-btn"
+                        id="leave-chat"
+                    >
+                        🚪 Leave Chat
+                    </button>
+
+
+                    <!-- Kept for compatibility
+                         with your current JS -->
+
+                    <button
+                        type="button"
                         class="chat-btn secondary-btn"
                         id="chat-action-btn"
+                        style="display: none;"
                     >
                         Cancel
                     </button>
 
+
                 </div>
+
 
             </div>
 

@@ -2,8 +2,35 @@
    BACKEND
 ========================= */
 
-const API_URL =
-    "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000";
+
+
+/* =========================
+   ANONYMOUS USER ID
+========================= */
+
+function getAnonymousId() {
+    let id = localStorage.getItem("randomconnect_id");
+
+    if (!id) {
+        if (
+            typeof crypto !== "undefined" &&
+            crypto.randomUUID
+        ) {
+            id = crypto.randomUUID();
+        } else {
+            id =
+                "user-" +
+                Date.now() +
+                "-" +
+                Math.random().toString(36).slice(2);
+        }
+
+        localStorage.setItem("randomconnect_id", id);
+    }
+
+    return id;
+}
 
 
 /* =========================
@@ -11,242 +38,481 @@ const API_URL =
 ========================= */
 
 function setupTheme() {
-
     const savedTheme =
-        localStorage.getItem(
-            "randomconnect_theme"
-        );
-
+        localStorage.getItem("randomconnect_theme");
 
     if (savedTheme === "dark") {
-
-        document.body.classList.add(
-            "dark"
-        );
-
+        document.body.classList.add("dark");
     }
-
 
     let themeButton =
-        document.getElementById(
-            "theme-toggle"
-        );
-
-
-    /*
-        If the HTML page does not already
-        have a theme button, create one.
-    */
+        document.getElementById("theme-toggle");
 
     if (!themeButton) {
-
         themeButton =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
-        themeButton.id =
-            "theme-toggle";
+        themeButton.id = "theme-toggle";
+        themeButton.className = "theme-toggle";
+        themeButton.type = "button";
 
-        themeButton.className =
-            "theme-toggle";
-
-        themeButton.type =
-            "button";
-
-
-        const nav =
-            document.querySelector(
-                "nav"
-            );
-
-
-        const header =
-            document.querySelector(
-                "header"
-            );
-
+        const nav = document.querySelector("nav");
 
         if (nav) {
+            const list = nav.querySelector("ul");
 
-            nav.appendChild(
-                themeButton
-            );
+            if (list) {
+                const li =
+                    document.createElement("li");
 
+                li.appendChild(themeButton);
+                list.appendChild(li);
+            } else {
+                nav.appendChild(themeButton);
+            }
         }
-
-        else if (header) {
-
-            header.appendChild(
-                themeButton
-            );
-
-        }
-
     }
-
 
     if (!themeButton) {
         return;
     }
 
-
     function updateThemeButton() {
-
         const dark =
-            document.body.classList.contains(
-                "dark"
-            );
-
+            document.body.classList.contains("dark");
 
         themeButton.innerHTML =
             dark
                 ? "☀️ Light"
                 : "🌙 Dark";
-
     }
 
-
     updateThemeButton();
-
 
     themeButton.addEventListener(
         "click",
         function () {
-
-            document.body.classList.toggle(
-                "dark"
-            );
-
+            document.body.classList.toggle("dark");
 
             const dark =
-                document.body.classList.contains(
-                    "dark"
-                );
-
+                document.body.classList.contains("dark");
 
             localStorage.setItem(
                 "randomconnect_theme",
-                dark
-                    ? "dark"
-                    : "light"
+                dark ? "dark" : "light"
             );
 
-
             updateThemeButton();
-
         }
     );
-
 }
-
-
-setupTheme();
 
 
 /* =========================
-   RANDOM CHAT
+   RANDOM CHAT ELEMENTS
 ========================= */
 
 const matchingScreen =
-    document.getElementById(
-        "matching-screen"
-    );
-
+    document.getElementById("matching-screen");
 
 const conversation =
-    document.getElementById(
-        "conversation"
-    );
-
+    document.getElementById("conversation");
 
 const chatStatus =
-    document.getElementById(
-        "chat-status"
-    );
-
+    document.getElementById("chat-status");
 
 const chatDescription =
-    document.getElementById(
-        "chat-description"
-    );
-
+    document.getElementById("chat-description");
 
 const chatActionBtn =
-    document.getElementById(
-        "chat-action-btn"
-    );
-
+    document.getElementById("chat-action-btn");
 
 const messageForm =
-    document.getElementById(
-        "message-form"
-    );
-
+    document.getElementById("message-form");
 
 const messageInput =
-    document.getElementById(
-        "message-input"
-    );
-
+    document.getElementById("message-input");
 
 const messages =
-    document.getElementById(
-        "messages"
-    );
+    document.getElementById("messages");
+
+const skipButton =
+    document.getElementById("skip-btn");
+
+const leaveChatButton =
+    document.getElementById("leave-chat");
 
 
-if (
-    matchingScreen &&
-    conversation
+let randomSocket = null;
+let randomConnected = false;
+
+/*
+ * IMPORTANT:
+ * This is the ID generated by the RANDOM CHAT SERVER.
+ * It is different from the localStorage ID used by groups.
+ */
+let randomServerUserId = null;
+
+
+/* =========================
+   RANDOM CHAT UI
+========================= */
+
+function showRandomWaiting(
+    text = "Looking for someone to chat with..."
 ) {
+    randomConnected = false;
 
-    setTimeout(
-        function () {
+    if (matchingScreen) {
+        matchingScreen.style.display = "flex";
+    }
 
-            matchingScreen.style.display =
-                "none";
+    if (conversation) {
+        conversation.style.display = "none";
+    }
 
+    if (chatStatus) {
+        chatStatus.textContent = "Searching...";
+    }
 
-            conversation.style.display =
-                "flex";
+    if (chatDescription) {
+        chatDescription.textContent = text;
+    }
 
-
-            if (chatStatus) {
-
-                chatStatus.textContent =
-                    "Connected";
-
-            }
-
-
-            if (chatDescription) {
-
-                chatDescription.textContent =
-                    "You are chatting anonymously.";
-
-            }
-
-
-            if (chatActionBtn) {
-
-                chatActionBtn.textContent =
-                    "Leave Chat";
-
-            }
-
-        },
-        2000
-    );
-
+    if (messages) {
+        messages.innerHTML = "";
+    }
 }
 
 
-if (
-    messageForm &&
-    messageInput &&
-    messages
+function showRandomConversation() {
+    randomConnected = true;
+
+    if (matchingScreen) {
+        matchingScreen.style.display = "none";
+    }
+
+    if (conversation) {
+        conversation.style.display = "flex";
+    }
+
+    if (chatStatus) {
+        chatStatus.textContent = "Connected";
+    }
+
+    if (chatDescription) {
+        chatDescription.textContent =
+            "You are chatting anonymously.";
+    }
+
+    if (messageInput) {
+        messageInput.focus();
+    }
+}
+
+
+/* =========================
+   RANDOM CHAT CONNECTION
+========================= */
+
+function connectRandomChat() {
+    if (!matchingScreen || !conversation) {
+        return;
+    }
+
+    randomServerUserId = null;
+
+    showRandomWaiting();
+
+    const protocol =
+        window.location.protocol === "https:"
+            ? "wss:"
+            : "ws:";
+
+    randomSocket =
+        new WebSocket(
+            `${protocol}//127.0.0.1:8000/ws/random`
+        );
+
+
+    randomSocket.addEventListener(
+        "open",
+        function () {
+            console.log(
+                "Random chat connected"
+            );
+        }
+    );
+
+
+    randomSocket.addEventListener(
+        "message",
+        function (event) {
+
+            let data;
+
+            try {
+                data = JSON.parse(event.data);
+            } catch (error) {
+                console.error(
+                    "Invalid random chat data:",
+                    error
+                );
+                return;
+            }
+
+            console.log(
+                "RANDOM EVENT:",
+                data
+            );
+
+
+            /* =====================
+               WAITING
+            ===================== */
+
+            if (data.type === "waiting") {
+
+                /*
+                 * Backend sends our server-side
+                 * anonymous ID here.
+                 */
+                if (data.user_id) {
+                    randomServerUserId =
+                        data.user_id;
+
+                    console.log(
+                        "My random server ID:",
+                        randomServerUserId
+                    );
+                }
+
+                showRandomWaiting(
+                    data.message ||
+                    "Looking for someone to chat with..."
+                );
+            }
+
+
+            /* =====================
+               MATCHED
+            ===================== */
+
+            else if (data.type === "matched") {
+
+                /*
+                 * Store our server-side ID again
+                 * when a match is created.
+                 */
+                if (data.user_id) {
+                    randomServerUserId =
+                        data.user_id;
+
+                    console.log(
+                        "Matched - my server ID:",
+                        randomServerUserId
+                    );
+                }
+
+                showRandomConversation();
+            }
+
+
+            /* =====================
+               MESSAGE
+            ===================== */
+
+            else if (data.type === "message") {
+
+                if (!messages) {
+                    return;
+                }
+
+                /*
+                 * THIS FIXES THE BUBBLE PROBLEM.
+                 *
+                 * If sender_id equals our server ID,
+                 * show the message on the RIGHT.
+                 *
+                 * Otherwise show it on the LEFT.
+                 */
+                const isMine =
+                    data.sender_id ===
+                    randomServerUserId;
+
+                addRandomMessage(
+                    data.content,
+                    isMine
+                );
+            }
+
+
+            /* =====================
+               PARTNER SKIPPED
+            ===================== */
+
+            else if (
+                data.type === "partner_skipped"
+            ) {
+
+                showRandomWaiting(
+                    "The other person skipped. Finding someone new..."
+                );
+            }
+
+
+            /* =====================
+               PARTNER LEFT
+            ===================== */
+
+            else if (
+                data.type === "partner_left"
+            ) {
+
+                randomConnected = false;
+
+                if (chatStatus) {
+                    chatStatus.textContent =
+                        "Partner left";
+                }
+
+                if (chatDescription) {
+                    chatDescription.textContent =
+                        "The other person left the chat.";
+                }
+
+                if (matchingScreen) {
+                    matchingScreen.style.display =
+                        "flex";
+                }
+
+                if (conversation) {
+                    conversation.style.display =
+                        "none";
+                }
+
+                if (messages) {
+                    messages.innerHTML = "";
+                }
+            }
+
+
+            /* =====================
+               SKIP BLOCKED
+            ===================== */
+
+            else if (
+                data.type === "skip_blocked"
+            ) {
+
+                alert(
+                    data.message ||
+                    "You cannot skip right now."
+                );
+            }
+
+
+            /* =====================
+               ERROR
+            ===================== */
+
+            else if (
+                data.type === "error"
+            ) {
+
+                console.error(
+                    "Random chat error:",
+                    data.message
+                );
+            }
+        }
+    );
+
+
+    randomSocket.addEventListener(
+        "close",
+        function () {
+
+            randomConnected = false;
+
+            if (chatStatus) {
+                chatStatus.textContent =
+                    "Disconnected";
+            }
+
+            if (chatDescription) {
+                chatDescription.textContent =
+                    "Connection closed.";
+            }
+        }
+    );
+
+
+    randomSocket.addEventListener(
+        "error",
+        function (error) {
+
+            console.error(
+                "Random chat error:",
+                error
+            );
+        }
+    );
+}
+
+
+/* =========================
+   RANDOM MESSAGE UI
+========================= */
+
+function addRandomMessage(
+    content,
+    isMine
 ) {
+    if (!messages) {
+        return;
+    }
+
+    const message =
+        document.createElement("div");
+
+    /*
+     * Your message:
+     * message sent
+     *
+     * Partner message:
+     * message received
+     */
+    message.className =
+        isMine
+            ? "message sent"
+            : "message received";
+
+
+    const paragraph =
+        document.createElement("p");
+
+    paragraph.textContent =
+        content;
+
+    message.appendChild(
+        paragraph
+    );
+
+    messages.appendChild(
+        message
+    );
+
+    messages.scrollTop =
+        messages.scrollHeight;
+}
+
+
+/* =========================
+   RANDOM SEND MESSAGE
+========================= */
+
+if (messageForm) {
 
     messageForm.addEventListener(
         "submit",
@@ -254,64 +520,109 @@ if (
 
             event.preventDefault();
 
-
-            const messageText =
-                messageInput.value.trim();
-
-
             if (
-                messageText === ""
+                !randomSocket ||
+                randomSocket.readyState !==
+                    WebSocket.OPEN
             ) {
-
                 return;
-
             }
 
+            if (!randomConnected) {
+                return;
+            }
 
-            const message =
-                document.createElement(
-                    "div"
-                );
+            const content =
+                messageInput
+                    ? messageInput.value.trim()
+                    : "";
 
+            if (!content) {
+                return;
+            }
 
-            message.classList.add(
-                "message",
-                "sent"
+            randomSocket.send(
+                JSON.stringify({
+                    type: "message",
+                    content: content
+                })
             );
 
+            messageInput.value = "";
 
-            const paragraph =
-                document.createElement(
-                    "p"
-                );
-
-
-            paragraph.textContent =
-                messageText;
-
-
-            message.appendChild(
-                paragraph
-            );
-
-
-            messages.appendChild(
-                message
-            );
-
-
-            messageInput.value =
-                "";
-
-
-            messages.scrollTop =
-                messages.scrollHeight;
-
+            messageInput.focus();
         }
     );
-
 }
 
+
+/* =========================
+   RANDOM SKIP
+========================= */
+
+if (skipButton) {
+
+    skipButton.addEventListener(
+        "click",
+        function () {
+
+            if (
+                !randomSocket ||
+                randomSocket.readyState !==
+                    WebSocket.OPEN
+            ) {
+                return;
+            }
+
+            if (!randomConnected) {
+                return;
+            }
+
+            randomSocket.send(
+                JSON.stringify({
+                    type: "skip"
+                })
+            );
+        }
+    );
+}
+
+
+/* =========================
+   RANDOM LEAVE
+========================= */
+
+if (leaveChatButton) {
+
+    leaveChatButton.addEventListener(
+        "click",
+        function () {
+
+            if (
+                randomSocket &&
+                randomSocket.readyState ===
+                    WebSocket.OPEN
+            ) {
+
+                randomSocket.send(
+                    JSON.stringify({
+                        type: "leave"
+                    })
+                );
+
+                randomSocket.close();
+            }
+
+            window.location.href =
+                "index.html";
+        }
+    );
+}
+
+
+/* =========================
+   OLD ACTION BUTTON
+========================= */
 
 if (chatActionBtn) {
 
@@ -319,12 +630,47 @@ if (chatActionBtn) {
         "click",
         function () {
 
-            window.location.href =
-                "index.html";
+            if (
+                randomSocket &&
+                randomSocket.readyState ===
+                    WebSocket.OPEN
+            ) {
 
+                if (randomConnected) {
+
+                    randomSocket.send(
+                        JSON.stringify({
+                            type: "skip"
+                        })
+                    );
+
+                } else {
+
+                    randomSocket.close();
+
+                    window.location.href =
+                        "index.html";
+                }
+
+            } else {
+
+                window.location.href =
+                    "index.html";
+            }
         }
     );
+}
 
+
+/* =========================
+   START RANDOM CHAT
+========================= */
+
+if (
+    matchingScreen &&
+    conversation
+) {
+    connectRandomChat();
 }
 
 
@@ -337,24 +683,20 @@ const createGroupForm =
         "create-group-form"
     );
 
-
 const joinGroupForm =
     document.getElementById(
         "join-group-form"
     );
-
 
 const groupNameInput =
     document.getElementById(
         "group-name"
     );
 
-
 const groupCodeInput =
     document.getElementById(
         "group-code"
     );
-
 
 const groupResult =
     document.getElementById(
@@ -374,19 +716,14 @@ if (createGroupForm) {
 
             event.preventDefault();
 
-
             const groupName =
-                groupNameInput.value.trim();
+                groupNameInput
+                    ? groupNameInput.value.trim()
+                    : "";
 
-
-            if (
-                groupName === ""
-            ) {
-
+            if (!groupName) {
                 return;
-
             }
-
 
             try {
 
@@ -409,58 +746,57 @@ if (createGroupForm) {
                         }
                     );
 
-
                 const data =
                     await response.json();
 
-
                 if (!response.ok) {
+
+                    if (groupResult) {
+
+                        groupResult.style.display =
+                            "block";
+
+                        groupResult.innerHTML = `
+                            <h3>Unable to Create Group</h3>
+                            <p>
+                                ${data.detail ||
+                                "Something went wrong."}
+                            </p>
+                        `;
+                    }
+
+                    return;
+                }
+
+                if (groupResult) {
 
                     groupResult.style.display =
                         "block";
 
-
                     groupResult.innerHTML = `
-                        <h3>Unable to Create Group</h3>
+                        <h3>✓ Group Created!</h3>
+
                         <p>
-                            ${data.detail ||
-                            "Something went wrong."}
+                            Your group
+                            <strong>${data.name}</strong>
+                            is ready.
+                        </p>
+
+                        <p>
+                            Group code:
+                        </p>
+
+                        <h2>${data.code}</h2>
+
+                        <p>
+                            Opening group chat...
                         </p>
                     `;
-
-                    return;
-
                 }
 
-
-                groupResult.style.display =
-                    "block";
-
-
-                groupResult.innerHTML = `
-                    <h3>✓ Group Created!</h3>
-
-                    <p>
-                        Your group
-                        <strong>${data.name}</strong>
-                        is ready.
-                    </p>
-
-                    <p>
-                        Group code:
-                    </p>
-
-                    <h2>${data.code}</h2>
-
-                    <p>
-                        Opening group chat...
-                    </p>
-                `;
-
-
-                groupNameInput.value =
-                    "";
-
+                if (groupNameInput) {
+                    groupNameInput.value = "";
+                }
 
                 setTimeout(
                     function () {
@@ -476,7 +812,6 @@ if (createGroupForm) {
                     800
                 );
 
-
             } catch (error) {
 
                 console.error(
@@ -484,24 +819,22 @@ if (createGroupForm) {
                     error
                 );
 
+                if (groupResult) {
 
-                groupResult.style.display =
-                    "block";
+                    groupResult.style.display =
+                        "block";
 
+                    groupResult.innerHTML = `
+                        <h3>Connection Error</h3>
 
-                groupResult.innerHTML = `
-                    <h3>Connection Error</h3>
-
-                    <p>
-                        Unable to connect to the server.
-                    </p>
-                `;
-
+                        <p>
+                            Unable to connect to the server.
+                        </p>
+                    `;
+                }
             }
-
         }
     );
-
 }
 
 
@@ -517,21 +850,16 @@ if (joinGroupForm) {
 
             event.preventDefault();
 
-
             const groupCode =
-                groupCodeInput.value
-                    .trim()
-                    .toUpperCase();
+                groupCodeInput
+                    ? groupCodeInput.value
+                        .trim()
+                        .toUpperCase()
+                    : "";
 
-
-            if (
-                groupCode === ""
-            ) {
-
+            if (!groupCode) {
                 return;
-
             }
-
 
             try {
 
@@ -554,52 +882,51 @@ if (joinGroupForm) {
                         }
                     );
 
-
                 const data =
                     await response.json();
 
-
                 if (!response.ok) {
+
+                    if (groupResult) {
+
+                        groupResult.style.display =
+                            "block";
+
+                        groupResult.innerHTML = `
+                            <h3>Unable to Join</h3>
+
+                            <p>
+                                ${data.detail ||
+                                "Group not found."}
+                            </p>
+                        `;
+                    }
+
+                    return;
+                }
+
+                if (groupResult) {
 
                     groupResult.style.display =
                         "block";
 
-
                     groupResult.innerHTML = `
-                        <h3>Unable to Join</h3>
+                        <h3>✓ Joined Successfully!</h3>
 
                         <p>
-                            ${data.detail ||
-                            "Group not found."}
+                            You joined
+                            <strong>${data.name}</strong>
+                        </p>
+
+                        <p>
+                            Opening group chat...
                         </p>
                     `;
-
-                    return;
-
                 }
 
-
-                groupResult.style.display =
-                    "block";
-
-
-                groupResult.innerHTML = `
-                    <h3>✓ Joined Successfully!</h3>
-
-                    <p>
-                        You joined
-                        <strong>${data.name}</strong>
-                    </p>
-
-                    <p>
-                        Opening group chat...
-                    </p>
-                `;
-
-
-                groupCodeInput.value =
-                    "";
-
+                if (groupCodeInput) {
+                    groupCodeInput.value = "";
+                }
 
                 setTimeout(
                     function () {
@@ -615,7 +942,6 @@ if (joinGroupForm) {
                     800
                 );
 
-
             } catch (error) {
 
                 console.error(
@@ -623,29 +949,27 @@ if (joinGroupForm) {
                     error
                 );
 
+                if (groupResult) {
 
-                groupResult.style.display =
-                    "block";
+                    groupResult.style.display =
+                        "block";
 
+                    groupResult.innerHTML = `
+                        <h3>Connection Error</h3>
 
-                groupResult.innerHTML = `
-                    <h3>Connection Error</h3>
-
-                    <p>
-                        Unable to connect to the server.
-                    </p>
-                `;
-
+                        <p>
+                            Unable to connect to the server.
+                        </p>
+                    `;
+                }
             }
-
         }
     );
-
 }
 
 
 /* =========================
-   GROUP CHAT
+   GROUP CHAT ELEMENTS
 ========================= */
 
 const groupTitle =
@@ -653,54 +977,50 @@ const groupTitle =
         "group-title"
     );
 
-
 const groupCodeElement =
     document.getElementById(
         "group-code"
     );
-
 
 const groupMessages =
     document.getElementById(
         "group-messages"
     );
 
-
 const emptyMessage =
     document.getElementById(
         "empty-message"
     );
-
 
 const groupMessageForm =
     document.getElementById(
         "group-message-form"
     );
 
-
 const groupMessageInput =
     document.getElementById(
         "group-message-input"
     );
-
 
 const groupChatStatus =
     document.getElementById(
         "group-chat-status"
     );
 
-
 const groupSendButton =
     document.getElementById(
         "send-button"
     );
-
 
 const groupLeaveButton =
     document.getElementById(
         "group-leave"
     );
 
+
+/* =========================
+   GROUP CHAT
+========================= */
 
 if (
     groupTitle &&
@@ -713,18 +1033,21 @@ if (
             window.location.search
         );
 
-
     const groupCode =
-        params.get("code");
+        (
+            params.get("code") ||
+            ""
+        ).toUpperCase();
 
-
-    const anonymousId =
+    const groupUserId =
         getAnonymousId();
 
+    let groupSocket = null;
 
-    let groupSocket =
-        null;
 
+    /* =====================
+       GROUP URLS
+    ===================== */
 
     function getGroupUrl() {
 
@@ -733,16 +1056,46 @@ if (
                 groupCode
             )
         }`;
-
     }
 
 
     function getMessagesUrl() {
 
         return `${getGroupUrl()}/messages`;
-
     }
 
+
+    /* =====================
+       GROUP STATUS
+    ===================== */
+
+    function setGroupStatus(
+        text,
+        connected = false
+    ) {
+
+        if (!groupChatStatus) {
+            return;
+        }
+
+        groupChatStatus.textContent =
+            text;
+
+        groupChatStatus.classList.toggle(
+            "connected",
+            connected
+        );
+
+        groupChatStatus.classList.toggle(
+            "disconnected",
+            !connected
+        );
+    }
+
+
+    /* =====================
+       LOAD GROUP
+    ===================== */
 
     async function loadGroup() {
 
@@ -751,33 +1104,30 @@ if (
                 getGroupUrl()
             );
 
-
         if (!response.ok) {
 
             throw new Error(
                 "Group not found"
             );
-
         }
-
 
         const group =
             await response.json();
 
-
         groupTitle.textContent =
             group.name;
-
 
         if (groupCodeElement) {
 
             groupCodeElement.textContent =
                 group.code;
-
         }
-
     }
 
+
+    /* =====================
+       LOAD GROUP MESSAGES
+    ===================== */
 
     async function loadGroupMessages() {
 
@@ -786,142 +1136,149 @@ if (
                 getMessagesUrl()
             );
 
-
         if (!response.ok) {
-
             return;
-
         }
-
 
         const oldMessages =
             await response.json();
 
+        if (
+            oldMessages.length > 0 &&
+            emptyMessage
+        ) {
+
+            emptyMessage.style.display =
+                "none";
+        }
 
         oldMessages.forEach(
-            addGroupMessage
-        );
+            function (message) {
 
+                addGroupMessage(
+                    message
+                );
+            }
+        );
     }
 
+
+    /* =====================
+       ADD GROUP MESSAGE
+    ===================== */
 
     function addGroupMessage(
         message
     ) {
 
+        if (!groupMessages) {
+            return;
+        }
+
         if (emptyMessage) {
 
             emptyMessage.style.display =
                 "none";
-
         }
 
+        const isMine =
+            message.sender_id ===
+            groupUserId;
 
         const wrapper =
             document.createElement(
                 "div"
             );
 
-
         wrapper.className =
-            message.sender_id === anonymousId
+            isMine
                 ? "chat-message own"
                 : "chat-message";
-
 
         const bubble =
             document.createElement(
                 "div"
             );
 
-
         bubble.className =
             "bubble";
 
-
         bubble.textContent =
             message.content;
-
 
         const meta =
             document.createElement(
                 "small"
             );
 
-
         meta.className =
             "meta";
 
-
         meta.textContent =
-            message.sender_id === anonymousId
+            isMine
                 ? "You"
                 : "Anonymous";
-
 
         wrapper.appendChild(
             bubble
         );
 
-
         wrapper.appendChild(
             meta
         );
-
 
         groupMessages.appendChild(
             wrapper
         );
 
-
         groupMessages.scrollTop =
             groupMessages.scrollHeight;
-
     }
 
 
+    /* =====================
+       CONNECT GROUP
+    ===================== */
+
     function connectToGroup() {
+
+        const protocol =
+            window.location.protocol === "https:"
+                ? "wss:"
+                : "ws:";
 
         groupSocket =
             new WebSocket(
-                `ws://127.0.0.1:8000/ws/groups/${
+                `${protocol}//127.0.0.1:8000/ws/groups/${
                     encodeURIComponent(
                         groupCode
                     )
                 }`
             );
 
-
         groupSocket.addEventListener(
             "open",
             function () {
 
-                if (groupChatStatus) {
+                console.log(
+                    "Group chat connected"
+                );
 
-                    groupChatStatus.textContent =
-                        "Connected";
-
-                    groupChatStatus.classList.add(
-                        "connected"
-                    );
-
-                    groupChatStatus.classList.remove(
-                        "disconnected"
-                    );
-
-                }
-
+                setGroupStatus(
+                    "Connected",
+                    true
+                );
 
                 if (groupSendButton) {
 
                     groupSendButton.disabled =
                         false;
-
                 }
 
+                if (groupMessageInput) {
 
-                groupMessageInput.focus();
-
+                    groupMessageInput.focus();
+                }
             }
         );
 
@@ -930,28 +1287,60 @@ if (
             "message",
             function (event) {
 
-                const data =
-                    JSON.parse(
-                        event.data
+                let data;
+
+                try {
+
+                    data =
+                        JSON.parse(
+                            event.data
+                        );
+
+                } catch (error) {
+
+                    console.error(
+                        "Invalid group chat data:",
+                        error
                     );
 
+                    return;
+                }
+
+                console.log(
+                    "GROUP EVENT:",
+                    data
+                );
+
+
+                /* CONNECTED */
 
                 if (
                     data.type ===
                     "connected"
                 ) {
 
+                    setGroupStatus(
+                        "Connected",
+                        true
+                    );
+
                     if (data.group) {
 
                         groupTitle.textContent =
                             data.group.name;
 
-                    }
+                        if (groupCodeElement) {
 
+                            groupCodeElement.textContent =
+                                data.group.code;
+                        }
+                    }
                 }
 
 
-                if (
+                /* MESSAGE */
+
+                else if (
                     data.type ===
                     "message"
                 ) {
@@ -959,46 +1348,43 @@ if (
                     addGroupMessage(
                         data
                     );
-
                 }
 
 
-                if (
+                /* GROUP DELETED */
+
+                else if (
                     data.type ===
                     "group_deleted"
                 ) {
 
-                    if (groupChatStatus) {
-
-                        groupChatStatus.textContent =
-                            "Group deleted";
-
-                    }
-
+                    setGroupStatus(
+                        "Group deleted",
+                        false
+                    );
 
                     alert(
                         data.reason ||
                         "This group has expired."
                     );
 
-
                     window.location.href =
                         "group.html";
-
                 }
 
 
-                if (
+                /* ERROR */
+
+                else if (
                     data.type ===
                     "error"
                 ) {
 
                     console.error(
+                        "Group chat error:",
                         data.message
                     );
-
                 }
-
             }
         );
 
@@ -1007,29 +1393,20 @@ if (
             "close",
             function () {
 
-                if (groupChatStatus) {
+                console.log(
+                    "Group chat disconnected"
+                );
 
-                    groupChatStatus.textContent =
-                        "Disconnected";
-
-                    groupChatStatus.classList.remove(
-                        "connected"
-                    );
-
-                    groupChatStatus.classList.add(
-                        "disconnected"
-                    );
-
-                }
-
+                setGroupStatus(
+                    "Disconnected",
+                    false
+                );
 
                 if (groupSendButton) {
 
                     groupSendButton.disabled =
                         true;
-
                 }
-
             }
         );
 
@@ -1039,31 +1416,28 @@ if (
             function (error) {
 
                 console.error(
-                    "WebSocket error:",
+                    "Group WebSocket error:",
                     error
                 );
 
-
-                if (groupChatStatus) {
-
-                    groupChatStatus.textContent =
-                        "Connection error";
-
-                }
-
+                setGroupStatus(
+                    "Connection error",
+                    false
+                );
 
                 if (groupSendButton) {
 
                     groupSendButton.disabled =
                         true;
-
                 }
-
             }
         );
-
     }
 
+
+    /* =====================
+       SEND GROUP MESSAGE
+    ===================== */
 
     groupMessageForm.addEventListener(
         "submit",
@@ -1071,54 +1445,41 @@ if (
 
             event.preventDefault();
 
-
             const content =
-                groupMessageInput.value.trim();
-
+                groupMessageInput
+                    ? groupMessageInput.value.trim()
+                    : "";
 
             if (!content) {
-
                 return;
-
             }
-
 
             if (
                 !groupSocket ||
                 groupSocket.readyState !==
                     WebSocket.OPEN
             ) {
-
                 return;
-
             }
-
 
             groupSocket.send(
                 JSON.stringify({
-
-                    type:
-                        "message",
-
-                    sender_id:
-                        anonymousId,
-
-                    content:
-                        content
-
+                    type: "message",
+                    sender_id: groupUserId,
+                    content: content
                 })
             );
 
-
-            groupMessageInput.value =
-                "";
-
+            groupMessageInput.value = "";
 
             groupMessageInput.focus();
-
         }
     );
 
+
+    /* =====================
+       LEAVE GROUP
+    ===================== */
 
     if (groupLeaveButton) {
 
@@ -1127,20 +1488,19 @@ if (
             function () {
 
                 if (groupSocket) {
-
                     groupSocket.close();
-
                 }
-
 
                 window.location.href =
                     "group.html";
-
             }
         );
-
     }
 
+
+    /* =====================
+       START GROUP CHAT
+    ===================== */
 
     async function startGroupChat() {
 
@@ -1150,10 +1510,11 @@ if (
                 "No group code provided."
             );
 
+            window.location.href =
+                "group.html";
+
             return;
-
         }
-
 
         try {
 
@@ -1166,56 +1527,21 @@ if (
         } catch (error) {
 
             console.error(
+                "Group loading failed:",
                 error
             );
-
 
             alert(
                 "Group not found."
             );
 
-
             window.location.href =
                 "group.html";
-
         }
-
     }
 
 
     startGroupChat();
-
-}
-
-
-/* =========================
-   ANONYMOUS ID
-========================= */
-
-function getAnonymousId() {
-
-    let id =
-        localStorage.getItem(
-            "randomconnect_id"
-        );
-
-
-    if (!id) {
-
-        id =
-            crypto.randomUUID();
-
-
-        localStorage.setItem(
-            "randomconnect_id",
-            id
-        );
-
-    }
-
-
-    return id;
-
 }
 
 
@@ -1232,16 +1558,13 @@ async function checkBackend() {
                 `${API_URL}/api/status`
             );
 
-
         const data =
             await response.json();
-
 
         console.log(
             "Backend connected:",
             data
         );
-
 
     } catch (error) {
 
@@ -1249,10 +1572,14 @@ async function checkBackend() {
             "Backend connection failed:",
             error
         );
-
     }
-
 }
 
+
+/* =========================
+   START
+========================= */
+
+setupTheme();
 
 checkBackend();

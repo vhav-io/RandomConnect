@@ -20,6 +20,10 @@
 <body>
 
 
+<!-- =========================
+     NAVIGATION
+========================= -->
+
 <header>
 
     <nav>
@@ -40,11 +44,13 @@
                 </a>
             </li>
 
+
             <li>
                 <a href="group.html">
                     👥 Groups
                 </a>
             </li>
+
 
             <li>
                 <button
@@ -63,44 +69,76 @@
 </header>
 
 
+
+<!-- =========================
+     GROUP CHAT
+========================= -->
+
 <main class="page">
 
 
+    <!-- CHAT HEADER -->
+
     <div class="chat-header">
 
-        <div>
 
-            <h1 id="group-title">
-                Loading...
-            </h1>
+        <div class="chat-header-left">
 
-            <p>
-                Code:
-                <strong id="group-code">
-                    ...
-                </strong>
-            </p>
+
+            <div class="chat-icon">
+                👥
+            </div>
+
+
+            <div>
+
+                <h1 id="group-title">
+                    Loading...
+                </h1>
+
+
+                <p class="group-code">
+                    Code:
+                    <strong id="group-code">
+                        ...
+                    </strong>
+                </p>
+
+            </div>
+
 
         </div>
 
 
-        <div
-            id="group-chat-status"
-            class="status"
-        >
-            Connecting...
+
+        <div class="chat-header-right">
+
+            <div id="group-chat-status">
+                Connecting...
+            </div>
+
+
+            <div class="chat-online-description">
+                Real-time group chat
+            </div>
+
         </div>
+
 
     </div>
 
 
-    <div class="chat-body">
+
+    <!-- =========================
+         CHAT BODY
+    ========================== -->
+
+    <div class="group-chat-body">
 
 
-        <div
-            id="group-messages"
-            class="messages"
-        >
+        <!-- MESSAGES -->
+
+        <div id="group-messages">
 
             <div
                 id="empty-message"
@@ -113,27 +151,27 @@
         </div>
 
 
+
+        <!-- MESSAGE INPUT -->
+
         <form
             id="group-message-form"
-            class="message-form"
         >
 
             <input
                 type="text"
                 id="group-message-input"
-                class="message-input"
                 placeholder="Type a message..."
                 autocomplete="off"
                 maxlength="5000"
             >
 
+
             <button
                 type="submit"
                 id="send-button"
-                class="send-button"
-                disabled
             >
-                Send
+                ➤ Send
             </button>
 
         </form>
@@ -142,14 +180,18 @@
     </div>
 
 
+
+    <!-- =========================
+         LEAVE GROUP
+    ========================== -->
+
     <div class="chat-actions">
 
         <button
             id="group-leave"
-            class="leave-button"
             type="button"
         >
-            Leave Group
+            🚪 Leave Group
         </button>
 
     </div>
@@ -158,7 +200,9 @@
 </main>
 
 
+
 <script src="script.js"></script>
+
 
 </body>
 

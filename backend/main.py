@@ -3,6 +3,7 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from backend.routers.random import router as random_router
 
 from backend.database import (
     initialize_database,
@@ -94,3 +95,4 @@ async def cleanup_inactive_groups():
 
 app.include_router(groups_router)
 app.include_router(chat_router)
+app.include_router(random_router)
