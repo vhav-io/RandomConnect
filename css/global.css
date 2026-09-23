@@ -1,0 +1,128 @@
+:root {
+    --background: #f6f7fb;
+    --surface: #ffffff;
+    --surface-2: #eef3fb;
+    --dark: #14213d;
+    --text: #14213d;
+    --muted: #667085;
+
+    --primary: #3478f6;
+    --primary-dark: #2563d8;
+
+    --secondary: #dce8ff;
+    --accent: #f4b942;
+
+    --border: #dce4f0;
+
+    --danger: #ef4444;
+}
+
+
+body.dark {
+    --background: #07111f;
+    --surface: #0d1a2d;
+    --surface-2: #15243a;
+
+    --dark: #f8fafc;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+
+    --secondary: #172d4a;
+    --border: #29415f;
+
+    --primary: #3478f6;
+    --primary-dark: #2563d8;
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+
+body {
+    font-family:
+        Arial,
+        sans-serif;
+
+    color: var(--text);
+
+    background-color: var(--background);
+
+    background-image:
+        radial-gradient(
+            circle,
+            var(--secondary) 2px,
+            transparent 2px
+        );
+
+    background-size: 32px 32px;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+
+/* =========================
+   THEME BUTTON
+========================= */
+
+.theme-toggle {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 9px 13px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.2s ease;
+}
+
+
+.theme-toggle:hover {
+    border-color: var(--primary);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+

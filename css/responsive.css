@@ -1,0 +1,421 @@
+    section {
+        padding-left: 24px;
+
+        padding-right: 24px;
+    }
+
+
+    nav {
+        min-height: 70px;
+
+        padding:
+            14px 24px;
+
+        gap: 16px;
+    }
+
+
+    nav ul {
+        gap: 16px;
+
+        justify-content: flex-end;
+
+        flex-wrap: wrap;
+    }
+
+
+    nav ul li a {
+        font-size: 13px;
+    }
+
+
+    .hero {
+        min-height: 620px;
+
+        padding: 60px 24px;
+    }
+
+
+    .hero-content {
+        width: 100%;
+    }
+
+
+    .hero-content h1 {
+        font-size: 38px;
+
+        line-height: 1.15;
+    }
+
+
+    .hero-content p {
+        font-size: 16px;
+    }
+
+
+    .hero-buttons {
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+
+    .hero-buttons .btn {
+        width: 100%;
+
+        max-width: 280px;
+    }
+
+
+    .connection {
+        padding: 60px 8%;
+    }
+
+
+    .connection-content h2 {
+        font-size: 30px;
+    }
+
+
+    .connection-options {
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+
+    .option {
+        padding: 28px 22px;
+    }
+
+
+    .how-it-works {
+        padding: 60px 8%;
+    }
+
+
+    .how-content h2 {
+        font-size: 30px;
+
+        margin-bottom: 30px;
+    }
+
+
+    .steps {
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+
+    .step {
+        padding: 28px 22px;
+    }
+
+
+    .features {
+        padding: 60px 8%;
+    }
+
+
+    .features-content h2 {
+        font-size: 30px;
+    }
+
+
+    .feature-list {
+        gap: 15px;
+    }
+
+
+    .feature {
+        padding: 28px 22px;
+    }
+
+
+    .footer-content {
+        flex-direction: column;
+
+        text-align: center;
+
+        gap: 25px;
+    }
+
+
+    .footer-links {
+        justify-content: center;
+
+        flex-wrap: wrap;
+    }
+
+
+    /* RANDOM CHAT */
+
+    .chat-page {
+        min-height: auto;
+
+        padding: 30px 15px;
+    }
+
+
+    .chat-container {
+        border-radius: 16px;
+    }
+
+
+    .chat-header {
+        padding: 20px;
+
+        align-items: flex-start;
+    }
+
+
+    .chat-header-left {
+        gap: 12px;
+    }
+
+
+    .chat-icon {
+        width: 48px;
+
+        height: 48px;
+
+        font-size: 23px;
+    }
+
+
+    .chat-header h1 {
+        font-size: 20px;
+    }
+
+
+    .chat-header-right {
+        display: none;
+    }
+
+
+    .chat-area {
+        min-height: 420px;
+    }
+
+
+    .matching-screen {
+        min-height: 420px;
+    }
+
+
+    .conversation {
+        height: 500px;
+    }
+
+
+    .messages {
+        height: 410px;
+
+        padding: 18px 14px;
+    }
+
+
+    .message {
+        max-width: 82%;
+
+        font-size: 14px;
+    }
+
+
+    .message-form {
+        height: 75px;
+
+        padding: 12px;
+    }
+
+
+    .message-form input {
+        height: 48px;
+    }
+
+
+    .message-form button {
+        height: 48px;
+
+        padding: 0 16px;
+    }
+
+
+    .chat-actions {
+        flex-wrap: wrap;
+
+        padding: 12px;
+    }
+
+
+    /* GROUP PAGE */
+
+    .group-page {
+        padding: 60px 24px;
+    }
+
+
+    .group-intro {
+        margin-bottom: 35px;
+    }
+
+
+    .group-intro h1 {
+        font-size: 34px;
+    }
+
+
+    .group-intro p {
+        font-size: 16px;
+    }
+
+
+    .group-options {
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+
+    .group-card {
+        padding: 28px 22px;
+    }
+
+
+    /* GROUP CHAT */
+
+    .page {
+        width: 100%;
+
+        height:
+            calc(100vh - 70px);
+
+        min-height: 0;
+
+        margin: 0;
+
+        border-radius: 0;
+
+        border-left: none;
+
+        border-right: none;
+    }
+
+
+    .page .chat-header {
+        padding: 18px;
+    }
+
+
+    #group-messages {
+        padding: 18px 12px;
+    }
+
+
+    .chat-message {
+        max-width: 84%;
+    }
+
+
+    #group-message-form {
+        padding: 10px;
+    }
+
+
+    #send-button {
+        padding: 0 17px;
+    }
+
+
+    #group-leave {
+        padding: 8px 14px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    nav ul {
+        gap: 14px;
+    }
+
+
+    nav ul li a {
+        font-size: 14px;
+    }
+
+
+    .logo {
+        font-size: 22px;
+    }
+
+
+    .hero-content h1 {
+        font-size: 34px;
+    }
+
+
+    .hero-content p {
+        font-size: 16px;
+
+        line-height: 1.6;
+    }
+
+
+    .hero-buttons .btn {
+        max-width: 100%;
+    }
+
+
+    .connection-content h2,
+    .how-content h2,
+    .features-content h2 {
+        font-size: 28px;
+    }
+
+
+    .group-intro h1 {
+        font-size: 30px;
+    }
+
+
+    .group-card h2 {
+        font-size: 24px;
+    }
+
+
+    .chat-header-left {
+        width: 100%;
+    }
+
+
+    .chat-header h1 {
+        font-size: 19px;
+    }
+
+
+    .message {
+        max-width: 88%;
+    }
+
+
+    .message-form button {
+        font-size: 0;
+    }
+
+
+    .message-form button::after {
+        content: "➤";
+
+        font-size: 20px;
+    }
+
+
+    #send-button {
+        font-size: 0;
+    }
+
+
+    #send-button::after {

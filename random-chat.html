@@ -11,62 +11,29 @@
 
     <title>Random Chat - RandomConnect</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/top-bar.css">
+    <link rel="stylesheet" href="css/random-chat.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 
 
 <body>
 
-    <!-- =========================
-         NAVIGATION
-    ========================== -->
+    <header class="top-bar">
+        <a href="index.html" class="logo">RandomConnect</a>
 
-    <header>
-
-        <nav>
-
-            <a
-                href="index.html"
-                class="logo"
-            >
-                RandomConnect
-            </a>
-
-
-            <ul>
-
-                <li>
-                    <a href="index.html">
-                        🏠 Home
-                    </a>
-                </li>
-
-                <li>
-                    <a href="group.html">
-                        👥 Groups
-                    </a>
-                </li>
-
-                <li>
-                    <button
-                        id="theme-toggle"
-                        class="theme-toggle"
-                        type="button"
-                    >
-                        ☀️ Light
-                    </button>
-                </li>
-
-            </ul>
-
-        </nav>
-
+        <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+        >
+            ☀️
+        </button>
     </header>
 
-
-    <!-- =========================
-         RANDOM CHAT
-    ========================== -->
 
     <main>
 
@@ -248,7 +215,10 @@
     </main>
 
 
-    <script src="script.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/random-chat.js"></script>
 
 </body>
 

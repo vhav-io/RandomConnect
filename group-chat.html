@@ -11,8 +11,10 @@
     >
 
     <title>Group Chat - RandomConnect</title>
-
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/top-bar.css">
+    <link rel="stylesheet" href="css/group-chat.css">
+    <link rel="stylesheet" href="css/responsive.css">
 
 </head>
 
@@ -20,52 +22,20 @@
 <body>
 
 
-<!-- =========================
-     NAVIGATION
-========================= -->
-
-<header>
-
-    <nav>
-
-        <a
-            href="index.html"
-            class="logo"
-        >
-            RandomConnect
-        </a>
 
 
-        <ul>
+<header class="top-bar">
+    <a href="index.html" class="logo">RandomConnect</a>
 
-            <li>
-                <a href="index.html">
-                    🏠 Home
-                </a>
-            </li>
-
-
-            <li>
-                <a href="group.html">
-                    👥 Groups
-                </a>
-            </li>
-
-
-            <li>
-                <button
-                    id="theme-toggle"
-                    class="theme-toggle"
-                    type="button"
-                >
-                    🌙 Dark
-                </button>
-            </li>
-
-        </ul>
-
-    </nav>
-
+    <button
+        id="theme-toggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Toggle theme"
+        title="Toggle theme"
+    >
+        ☀️
+    </button>
 </header>
 
 
@@ -201,7 +171,10 @@
 
 
 
-<script src="script.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/group-chat.js"></script>
 
 
 </body>

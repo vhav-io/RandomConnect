@@ -3,146 +3,157 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Groups - RandomConnect</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/top-bar.css">
+    <link rel="stylesheet" href="css/group.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 
 <body>
 
-    <header>
-        <nav>
+<header class="top-bar">
 
-            <div class="logo">
-                <a href="index.html">RandomConnect</a>
+    <a href="index.html" class="logo">
+        RandomConnect
+    </a>
+
+    <button
+        id="theme-toggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Toggle theme"
+        title="Toggle theme"
+    >
+        ☀️
+    </button>
+
+</header>
+
+
+<main class="group-page">
+
+    <div class="group-auth-card">
+
+        <div class="group-auth-header">
+
+            <div class="group-icon">
+                👥
             </div>
 
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="random-chat.html">Random Chat</a></li>
-            </ul>
+            <h1 id="group-form-title">
+                Join a Group
+            </h1>
 
-        </nav>
-    </header>
+            <p id="group-form-description">
+                Enter the group code shared with you to join the conversation.
+            </p>
 
-
-    <main>
-
-        <section class="group-page">
-
-            <div class="group-intro">
-
-                <h1>Create or Join a Group</h1>
-
-                <p>
-                    Create a temporary space for your friends or join an existing conversation.
-                </p>
-
-            </div>
+        </div>
 
 
-            <div class="group-options">
+        <!-- JOIN GROUP -->
+
+        <form
+            id="join-group-form"
+            class="group-form"
+        >
+
+            <label for="group-code">
+                Group Code
+            </label>
+
+            <input
+                type="text"
+                id="group-code"
+                placeholder="Enter 6-character code"
+                maxlength="6"
+                autocomplete="off"
+                required
+            >
+
+            <button
+                type="submit"
+                class="group-submit-btn"
+            >
+                Join Group
+            </button>
+
+        </form>
 
 
-                <!-- Create Group -->
+        <!-- CREATE GROUP -->
 
-                <div class="group-card">
+        <form
+            id="create-group-form"
+            class="group-form"
+            style="display: none;"
+        >
 
-                    <div class="group-card-content">
+            <label for="group-name">
+                Group Name
+            </label>
 
-                        <h2>Create a Group</h2>
+            <input
+                type="text"
+                id="group-name"
+                placeholder="Enter a group name"
+                maxlength="50"
+                autocomplete="off"
+                required
+            >
 
-                        <p>
-                            Start a temporary anonymous group and invite others to join.
-                        </p>
+            <button
+                type="submit"
+                class="group-submit-btn"
+            >
+                Create Group
+            </button>
 
-                        <form id="create-group-form">
-
-                            <label for="group-name">
-                                Group Name
-                            </label>
-
-                            <input
-                                type="text"
-                                id="group-name"
-                                placeholder="Enter a group name"
-                                autocomplete="off"
-                                required
-                            >
-
-                            <button
-                                type="submit"
-                                class="group-btn primary-group-btn"
-                            >
-                                Create Group
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </div>
+        </form>
 
 
-                <!-- Join Group -->
+        <!-- RESULT / ERROR -->
 
-                <div class="group-card">
-
-                    <div class="group-card-content">
-
-                        <h2>Join a Group</h2>
-
-                        <p>
-                            Enter a group code shared with you to join the conversation.
-                        </p>
-
-                        <form id="join-group-form">
-
-                            <label for="group-code">
-                                Group Code
-                            </label>
-
-                            <input
-                                type="text"
-                                id="group-code"
-                                placeholder="Enter group code"
-                                autocomplete="off"
-                                required
-                            >
-
-                            <button
-                                type="submit"
-                                class="group-btn secondary-group-btn"
-                            >
-                                Join Group
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </div>
+        <div
+            id="group-result"
+            class="group-result"
+        ></div>
 
 
-            </div>
+        <!-- SWITCH -->
+
+        <div class="group-switch">
+
+            <p id="group-switch-text">
+                Don't have a group?
+            </p>
+
+            <button
+                type="button"
+                id="group-switch-btn"
+                class="group-switch-btn"
+            >
+                Create a Group
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
 
 
-            <!-- Group Result -->
-
-            <div
-                class="group-result"
-                id="group-result"
-            ></div>
-
-        </section>
-
-    </main>
 
 
-    <script src="script.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/groups.js"></script>
 
 </body>
 
