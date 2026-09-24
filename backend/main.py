@@ -2,7 +2,6 @@ import asyncio
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from backend.routers.random import router as random_router
 
 from backend.database import (
@@ -26,11 +25,7 @@ app.add_middleware(
 )
 
 
-app.mount(
-    "/uploads",
-    StaticFiles(directory="uploads"),
-    name="uploads"
-)
+
 
 
 @app.on_event("startup")
