@@ -15,7 +15,7 @@ class Group(BaseModel):
 
 
 class JoinGroup(BaseModel):
-    code: str = Field(min_length=6, max_length=6)
+    code: str = Field(min_length=4, max_length=4)
 
 
 class Message(BaseModel):
@@ -29,7 +29,7 @@ def generate_group_code():
     while True:
         code = "".join(
             secrets.choice(characters)
-            for _ in range(6)
+            for _ in range(4)
         )
 
         existing_group = fetch_one(
