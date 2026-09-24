@@ -271,13 +271,13 @@ if (createGroupForm) {
                 setTimeout(
                     function () {
 
-                        window.location.href =
-                            `group-chat.html?code=${
-                                encodeURIComponent(
-                                    data.code
-                                )
-                            }`;
+                        sessionStorage.setItem(
+                            "randomconnect_group_code",
+                            data.code
+                        );
 
+                        window.location.href =
+                            "group-chat.html";
                     },
                     800
                 );
@@ -385,12 +385,13 @@ if (joinGroupForm) {
                 setTimeout(
                     function () {
 
+                        sessionStorage.setItem(
+                            "randomconnect_group_code",
+                            data.code
+                        );
+
                         window.location.href =
-                            `group-chat.html?code=${
-                                encodeURIComponent(
-                                    data.code
-                                )
-                            }`;
+                            "group-chat.html";
 
                     },
                     800

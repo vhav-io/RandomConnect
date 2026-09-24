@@ -54,19 +54,17 @@ if (
     groupMessageForm
 ) {
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
     const groupCode =
         (
-            params.get("code") ||
-            ""
-        ).toUpperCase();
+            sessionStorage.getItem(
+                "randomconnect_group_code"
+            ) || ""
+        ).trim().toUpperCase();
+
 
     const groupUserId =
         getAnonymousId();
+
 
     let groupSocket = null;
 
@@ -211,51 +209,65 @@ if (
             message.sender_id ===
             groupUserId;
 
+
         const wrapper =
             document.createElement(
                 "div"
             );
+
 
         wrapper.className =
             isMine
                 ? "chat-message own"
                 : "chat-message";
 
+
         const bubble =
             document.createElement(
                 "div"
             );
 
+
         bubble.className =
             "bubble";
 
-        bubble.textContent =
-            message.content;
+
+        bubble.innerHTML =
+            renderMessageContent(
+                message.content
+            );
+
 
         const meta =
             document.createElement(
                 "small"
             );
 
+
         meta.className =
             "meta";
+
 
         meta.textContent =
             isMine
                 ? "You"
                 : "Anonymous";
 
+
         wrapper.appendChild(
             bubble
         );
+
 
         wrapper.appendChild(
             meta
         );
 
+
         groupMessages.appendChild(
             wrapper
         );
+
 
         groupMessages.scrollTop =
             groupMessages.scrollHeight;
@@ -268,11 +280,6 @@ if (
 
     function connectToGroup() {
 
-        const protocol =
-            window.location.protocol === "https:"
-                ? "wss:"
-                : "ws:";
-
         groupSocket =
             new WebSocket(
                 `${WS_URL}/ws/groups/${
@@ -282,6 +289,7 @@ if (
                 }`
             );
 
+
         groupSocket.addEventListener(
             "open",
             function () {
@@ -290,20 +298,17 @@ if (
                     "Group chat connected"
                 );
 
+
                 setGroupStatus(
                     "Connected",
                     true
                 );
 
+
                 if (groupSendButton) {
 
                     groupSendButton.disabled =
                         false;
-                }
-
-                if (groupMessageInput) {
-
-                    groupMessageInput.focus();
                 }
             }
         );
@@ -332,6 +337,7 @@ if (
                     return;
                 }
 
+
                 console.log(
                     "GROUP EVENT:",
                     data
@@ -350,10 +356,12 @@ if (
                         true
                     );
 
+
                     if (data.group) {
 
                         groupTitle.textContent =
                             data.group.name;
+
 
                         if (groupCodeElement) {
 
@@ -389,10 +397,17 @@ if (
                         false
                     );
 
+
                     alert(
                         data.reason ||
                         "This group has expired."
                     );
+
+
+                    sessionStorage.removeItem(
+                        "randomconnect_group_code"
+                    );
+
 
                     window.location.href =
                         "group.html";
@@ -423,10 +438,12 @@ if (
                     "Group chat disconnected"
                 );
 
+
                 setGroupStatus(
                     "Disconnected",
                     false
                 );
+
 
                 if (groupSendButton) {
 
@@ -446,15 +463,55 @@ if (
                     error
                 );
 
+
                 setGroupStatus(
                     "Connection error",
                     false
                 );
 
+
                 if (groupSendButton) {
 
                     groupSendButton.disabled =
                         true;
+                }
+            }
+        );
+    }
+
+
+    /* =====================
+       MESSAGE INPUT
+    ===================== */
+
+    if (groupMessageInput) {
+
+        groupMessageInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    event.shiftKey
+                ) {
+
+                    // Shift + Enter = new line.
+                    return;
+                }
+
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+
+                    if (groupMessageForm) {
+
+                        groupMessageForm.requestSubmit();
+                    }
                 }
             }
         );
@@ -471,22 +528,27 @@ if (
 
             event.preventDefault();
 
+
             const content =
                 groupMessageInput
-                    ? groupMessageInput.value.trim()
+                    ? groupMessageInput.value
                     : "";
 
-            if (!content) {
+
+            if (!content.trim()) {
                 return;
             }
+
 
             if (
                 !groupSocket ||
                 groupSocket.readyState !==
                     WebSocket.OPEN
             ) {
+
                 return;
             }
+
 
             groupSocket.send(
                 JSON.stringify({
@@ -496,7 +558,10 @@ if (
                 })
             );
 
-            groupMessageInput.value = "";
+
+            groupMessageInput.value =
+                "";
+
 
             groupMessageInput.focus();
         }
@@ -517,6 +582,12 @@ if (
                     groupSocket.close();
                 }
 
+
+                sessionStorage.removeItem(
+                    "randomconnect_group_code"
+                );
+
+
                 window.location.href =
                     "group.html";
             }
@@ -536,11 +607,14 @@ if (
                 "No group code provided."
             );
 
+
             window.location.href =
                 "group.html";
 
+
             return;
         }
+
 
         try {
 
@@ -557,9 +631,16 @@ if (
                 error
             );
 
+
             alert(
                 "Group not found."
             );
+
+
+            sessionStorage.removeItem(
+                "randomconnect_group_code"
+            );
+
 
             window.location.href =
                 "group.html";
@@ -569,4 +650,3 @@ if (
 
     startGroupChat();
 }
-
